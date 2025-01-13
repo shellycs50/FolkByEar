@@ -107,6 +107,27 @@ export default function Home() {
     }
   }, [])
 
+  const initialSizes = React.useMemo(() => {
+    if (typeof window === 'undefined') return [0, 0]
+    const width = window.innerWidth
+    let playerWidth = width / 1.5
+
+    switch (true) {
+      case width > 1280:
+        playerWidth = width / 2
+        break
+      case width > 768:
+        playerWidth = width / 1.5
+        break
+      default:
+        playerWidth = width - 40
+        break
+    }
+    playerWidth = playerWidth
+    const playerHeight = playerWidth * (9 / 16)
+    return [playerWidth - 16, playerHeight - 16]
+  }, [])
+
   const debouncedHandleResize = debounce(handleResize, 500)
 
   useEffect(() => {
@@ -118,8 +139,8 @@ export default function Home() {
 
 
   const playerOpts = React.useState({
-    height: 390,
-    width: 560,
+    height: initialSizes[1],
+    width: initialSizes[0],
     // playerVars: {
     //   // https://developers.google.com/youtube/player_parameters
 
@@ -219,30 +240,34 @@ export default function Home() {
   }
   const thumbClasses = "absolute p-2 rounded-xl cursor-pointer text-white border-gray-200 "
 
+
+
+
   return (
     <div className="bg-slate-700 flex flex-col justify-center pt-0 pb-0 min-h-screen">
       {/* <AuthShowcase /> */}
-      <div className="flex flex-col gap-5 items-center pt-0 m-0">
-        <div className="bg-purple-500 border-slate-900 border-2 p-5 rounded-lg w-11/12 sm:w-1/2 md:w-1/3">
-          <label htmlFor="link" className="block text-sm/6 font-medium text-gray-900">
-            Enter Your Youtube Link
+      <div className="flex flex-col gap-5 items-center justify-center pt-0 m-0 w-full">
+        <div className="bg-purple-400 border-slate-900 border-2 p-5 rounded-lg w-11/12 sm:w-1/2 md:w-1/2 flex flex-col items-center">
+          <label htmlFor="link" className="block text-sm/6 font-medium text-gray-900 ">
+            Enter Your Youtube Link Here
           </label>
-          <div className="mt-2">
+          <div className="mt-2 w-full lg:w-2/3">
             <input
               id="link"
               name="link"
               type="link"
               value={userUrl}
               onChange={(e) => setUserUrl(e.target.value)}
-              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+              className="text-center block w-full rounded-md bg-slate-200 px-3 py-1.5 font-semibold text-gray-900 outline outline-1 -outline-offset-1 outline-slate-400 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 lg:text-base"
             />
           </div>
         </div>
 
         <div className="w-full flex flex-col items-center gap-5">
-          <YouTube className="select-none bg-gray-600 p-4 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={onPlayerReady} onStateChange={onStateChange} />
+          <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={onPlayerReady} onStateChange={onStateChange} />
           <div className="flex flex-col justify-center items-center gap-10 w-full sm:w-2/3 md:w-7/12 bg-slate-800 border-slate-900 border-2 p-8 rounded-3xl">
             <div className="w-full bg-slate-600 p-5 pb-8 rounded-3xl flex">
+
               <ReactSlider
                 value={sliderValues}
                 onAfterChange={(newSliderValues) => {
@@ -263,7 +288,7 @@ export default function Home() {
                 step={.01}
                 min={trackMin}
                 max={trackMax} //duration is in 10th of a second ReactSlider takes arg in seconds
-                minDistance={.01}
+                minDistance={.05}
               />
             </div>
             <div className="flex justify-between w-full">
