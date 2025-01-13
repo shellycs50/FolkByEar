@@ -14,6 +14,5 @@ export function extractVideoId(url: string) {
 }
 
 export function fmtMSS(s: number) {
-    console.log("formatting number to M:SS")
     return (s - (s %= 60)) / 60 + (9 < s ? ':' : ':0') + s;
 }

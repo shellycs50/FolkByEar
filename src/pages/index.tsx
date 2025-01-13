@@ -8,7 +8,7 @@ import ReactSlider from "react-slider";
 import debounce from 'lodash.debounce'
 import SpeedDropDown from "~/components/SpeedDropDown";
 import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, PlayPauseIcon } from "@heroicons/react/16/solid";
-import PlayerStates from "youtube-player/dist/constants/PlayerStates";
+import type PlayerStates from "youtube-player/dist/constants/PlayerStates";
 
 export default function Home() {
   const [sliderValues, setSliderValues] = React.useState([26.67, 29.39])
@@ -55,7 +55,7 @@ export default function Home() {
     void snapToLoop()
   }, [snapToLoop])
 
-  React.useMemo(() => {
+  React.useEffect(() => {
     voidSnapToLoop()
   }, [currentTime, voidSnapToLoop])
 
@@ -69,7 +69,7 @@ export default function Home() {
     void changeSpeed(speed)
   }, [changeSpeed])
 
-  React.useMemo(() => {
+  React.useEffect(() => {
     voidChangeSpeed(speed)
   }, [speed, voidChangeSpeed])
 
@@ -158,7 +158,7 @@ export default function Home() {
     }
   };
 
-  React.useMemo(() => {
+  React.useEffect(() => {
     if (userUrl.length < 24) return
     const id = extractVideoId(userUrl)
     if (id) {
@@ -167,8 +167,14 @@ export default function Home() {
   }, [userUrl])
 
   const zoomTrack = (start: number, end: number) => {
-    setTrackMin(start)
-    setTrackMax(end)
+    const diff = end - start
+    const extra = diff * 0.2
+    let min = start - extra
+    min = min < 0 ? 0 : min
+    let max = end + extra
+    max = max > duration ? duration : max
+    setTrackMin(min)
+    setTrackMax(max)
   }
 
   const unZoomTrack = () => {
@@ -190,7 +196,6 @@ export default function Home() {
   const voidPlayPause = () => {
     void playPause()
   }
-
   const thumbClasses = "absolute p-2 rounded-xl cursor-pointer text-white border-gray-200 "
 
   return (
@@ -225,7 +230,7 @@ export default function Home() {
                 }}
                 className="horizontal-slider w-full"
                 thumbClassName="bg-white p-1 cursor-pointer relative h-3"
-                trackClassName="border-2 border-purple-500 bg-purple-400 h-3 border-black border-4"
+                // trackClassName classes applied globals.css
                 withTracks={true}
                 renderThumb={(props, state) =>
                   <div {...props}>
