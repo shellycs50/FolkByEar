@@ -22,7 +22,8 @@ export default function Home() {
   const [trackMax, setTrackMax] = React.useState(duration / 10)
   const [isZoomed, setIsZoomed] = React.useState(false)
 
-  const pollingRef = React.useRef<NodeJS.Timeout | null>(null)
+  // const pollingRef = React.useRef<NodeJS.Timeout | null>(null)
+  const pollingRef = React.useRef<number | null>(null)
   const mssNums: string[] = React.useMemo(() => {
     const precomputedNums = []
     for (let i = 0; i <= duration; i++) {
@@ -80,7 +81,6 @@ export default function Home() {
     }
   }
 
-
   const handleResize = React.useCallback(() => {
     if (!window) return
     const voidSetSize = (width: number, height: number) => {
@@ -122,7 +122,7 @@ export default function Home() {
     width: 560,
     // playerVars: {
     //   // https://developers.google.com/youtube/player_parameters
-    //   autoplay: 1,
+
     // },
   })
 
@@ -141,19 +141,40 @@ export default function Home() {
 
   const onPlayerReady: YouTubeProps['onReady'] = (event: { target: YouTubePlayer }) => {
     playerRef.current = event.target
+    setSpeed(1)
     void updateDuration()
     handleResize()
   }
 
+  // const onStateChange = (e: YouTubeEvent<number>) => {
+  //   const playerState: number = e.data;
+  //   if (playerState === 1) {
+  //     pollingRef.current = setInterval(() => {
+  //       void updateTime()
+  //     }, 10);
+  //   } else {
+  //     if (pollingRef.current) {
+  //       clearInterval(pollingRef.current)
+  //     }
+  //   }
+  // };
+
   const onStateChange = (e: YouTubeEvent<number>) => {
     const playerState: number = e.data;
-    if (playerState === 1) {
-      pollingRef.current = setInterval(() => {
-        void updateTime()
-      }, 50);
-    } else {
+
+    const poll = () => {
+      void updateTime(); // Call your updateTime logic
+      pollingRef.current = requestAnimationFrame(poll); // Schedule the next frame
+    };
+
+    if (playerState === 1) { // If playing
+      if (!pollingRef.current) {
+        pollingRef.current = requestAnimationFrame(poll);
+      }
+    } else { // If paused or stopped
       if (pollingRef.current) {
-        clearInterval(pollingRef.current)
+        cancelAnimationFrame(pollingRef.current);
+        pollingRef.current = null;
       }
     }
   };
@@ -226,7 +247,7 @@ export default function Home() {
                 value={sliderValues}
                 onAfterChange={(newSliderValues) => {
                   setSliderValues(newSliderValues)
-                  void snapToLoop()
+                  voidSnapToLoop()
                 }}
                 className="horizontal-slider w-full"
                 thumbClassName="bg-white p-1 cursor-pointer relative h-3"
