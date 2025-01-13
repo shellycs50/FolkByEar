@@ -1,5 +1,5 @@
 import { signIn, signOut, useSession } from "next-auth/react";
-import React, { useEffect } from "react";
+import React from "react";
 import { api } from "~/utils/api";
 import { extractVideoId, fmtMSS } from "packages/helpers";
 import YouTube, { YouTubeEvent, YouTubeProps } from 'react-youtube'
@@ -22,35 +22,58 @@ export default function Home() {
     return precomputedNums
   }, [duration])
 
-  const seekToTime = (timeInSeconds: number) => {
+  const seekToTime = async (timeInSeconds: number) => {
     if (playerRef.current) {
-      playerRef.current.seekTo(timeInSeconds, true);
+      await playerRef.current.seekTo(timeInSeconds, true);
     }
   };
 
-  const snapToLoop = () => {
+  const snapToLoop = async () => {
     if (!sliderValues) return
-    if (currentTime < sliderValues[0]!) {
-      seekToTime(sliderValues[0]!)
-    }
-    if (currentTime > sliderValues[1]!) {
-      seekToTime(sliderValues[0]!)
+    try {
+      if (currentTime < sliderValues[0]!) {
+        await seekToTime(sliderValues[0]!)
+      }
+      if (currentTime > sliderValues[1]!) {
+        await seekToTime(sliderValues[0]!)
+      }
+    } catch (err) {
+      console.error(err)
     }
   }
 
-  React.useMemo(() => {
-    snapToLoop()
-  }, [currentTime])
+  void React.useMemo(async () => {
+    await snapToLoop()
+  }, [currentTime, snapToLoop])
 
   const playerOpts = React.useState({
     height: '390',
     width: '640',
-    playerVars: {
-      // https://developers.google.com/youtube/player_parameters
-      autoplay: 1,
-    },
+    // playerVars: {
+    //   // https://developers.google.com/youtube/player_parameters
+    //   autoplay: 1,
+    // },
   })
+  const updateDuration = async () => {
+    if (!playerRef.current) return
+    try {
+      const newDuration = await playerRef.current.getDuration()
+      setDuration(newDuration)
+    } catch (error) {
+      console.error("Failed to fetch duration:", error);
+    }
+  };
 
+  const updateTime = async () => {
+    if (!playerRef.current) return
+    try {
+      const time = await playerRef.current.getCurrentTime();
+      setCurrentTime(time)
+    } catch (error) {
+      console.error("Failed to fetch duration:", error);
+    }
+
+  }
 
   const onPlayerReady: YouTubeProps['onReady'] = (event: { target: YouTubePlayer }) => {
     // access to player in all event handlers via event.target
@@ -59,7 +82,7 @@ export default function Home() {
     console.log(playerRef.current)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     const duration = playerRef.current.getDuration()
-    setDuration(duration)
+    void updateDuration()
   }
 
   const onStateChange = (e: YouTubeEvent) => {
@@ -67,10 +90,10 @@ export default function Home() {
     const playerState = e.data;
     if (playerState === 1) {
       // Video is playing, start polling current time
-      if (!playerRef.current) return
+
       pollingRef.current = setInterval(() => {
-        const time = playerRef.current.getCurrentTime();
-        setCurrentTime(time); // Update the state
+        void updateTime()
+        // Update the state
       }, 200); // Update every second
 
     } else {
@@ -118,7 +141,7 @@ export default function Home() {
                 value={sliderValues}
                 onAfterChange={(newSliderValues) => {
                   setSliderValues(newSliderValues)
-                  snapToLoop()
+                  void snapToLoop()
                 }}
                 className="horizontal-slider w-full"
                 thumbClassName="bg-gray-200 p-1 cursor-pointer relative h-3"
