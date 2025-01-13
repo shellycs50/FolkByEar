@@ -194,9 +194,9 @@ export default function Home() {
   const thumbClasses = "absolute p-2 rounded-xl cursor-pointer text-white "
 
   return (
-    <div className="bg-slate-700 flex flex-col justify-center pt-10 pb-60 min-h-screen">
+    <div className="bg-slate-700 flex flex-col justify-center pt-0 pb-0 min-h-screen">
       {/* <AuthShowcase /> */}
-      <div className="flex flex-col gap-10 items-center pt-5">
+      <div className="flex flex-col gap-5 items-center pt-0">
         <div className="bg-purple-500 p-5 rounded-lg w-11/12 sm:w-1/2 md:w-1/3">
           <label htmlFor="link" className="block text-sm/6 font-medium text-gray-900">
             Enter Your Youtube Link
@@ -215,7 +215,7 @@ export default function Home() {
 
         <div className="w-full flex flex-col items-center gap-5">
           <YouTube className="select-none bg-gray-600 p-4 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={onPlayerReady} onStateChange={onStateChange} />
-          <div className="flex flex-col justify-center items-center gap-10 w-11/12 sm:w-2/3 md:w-1/2 bg-gray-800 p-8 rounded-3xl">
+          <div className="flex flex-col justify-center items-center gap-10 w-11/12 sm:w-2/3 md:w-7/12 bg-slate-800 border-slate-900 border-2 p-8 rounded-3xl">
 
             <div className="w-full bg-slate-600 p-5 pb-8 rounded-3xl flex">
               <ReactSlider
@@ -243,13 +243,13 @@ export default function Home() {
             </div>
             <div className="flex justify-between w-full">
               <SpeedDropDown speed={speed} setSpeed={setSpeed} />
-              <PlayPauseIcon className="w-10 h-10 text-white cursor-pointer" onClick={() => voidPlayPause()} />
+              <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => voidPlayPause()} />
               {isZoomed ?
-                <MagnifyingGlassMinusIcon className="w-10 h-10 text-white cursor-pointer" onClick={() => {
+                <MagnifyingGlassMinusIcon className="w-10 h-10 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => {
                   setIsZoomed(false)
                   unZoomTrack()
                 }} /> :
-                <MagnifyingGlassPlusIcon className="w-10 h-10 text-white cursor-pointer" onClick={() => {
+                <MagnifyingGlassPlusIcon className="w-10 h-10 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => {
 
                   setIsZoomed(true)
                   zoomTrack(sliderValues[0]!, sliderValues[1]!)
