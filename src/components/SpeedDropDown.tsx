@@ -2,7 +2,7 @@ import { ChevronDownIcon } from '@heroicons/react/16/solid'
 
 export default function SpeedDropDown({ speed, setSpeed }: { speed: number, setSpeed: (speed: number) => void }) {
   return (
-    <div className='relative'>
+    <div className='relative self-endrt'>
       <label htmlFor="speed" className="block text-sm/6 text-gray-200 text-center absolute bottom-9">
         Speed
       </label>
@@ -25,6 +25,9 @@ export default function SpeedDropDown({ speed, setSpeed }: { speed: number, setS
           <option value={0.8}>0.8</option>
           <option value={0.9}>0.9</option>
           <option value={1.0}>1.0</option>
+          <option value={1.2}>1.2</option>
+          <option value={1.5}>1.5</option>
+
         </select>
         <ChevronDownIcon
           aria-hidden="true"

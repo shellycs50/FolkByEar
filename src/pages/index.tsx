@@ -7,15 +7,21 @@ import type { YouTubePlayer } from 'youtube-player/dist/types'
 import ReactSlider from "react-slider";
 import debounce from 'lodash.debounce'
 import SpeedDropDown from "~/components/SpeedDropDown";
+import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, PlayPauseIcon } from "@heroicons/react/16/solid";
+import PlayerStates from "youtube-player/dist/constants/PlayerStates";
+
 export default function Home() {
-  const [sliderValues, setSliderValues] = React.useState([0.0, 100.0])
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  const [sliderValues, setSliderValues] = React.useState([26.67, 29.39])
   const playerRef = React.useRef<YouTubePlayer | null>(null);
   const [currentTime, setCurrentTime] = React.useState(0);
-  const [videoId, setVideoId] = React.useState("p7BmgJSKzu4")
-  const [userUrl, setUserUrl] = React.useState("https://youtube.com/watch?v=p7BmgJSKzu4")
+  const [videoId, setVideoId] = React.useState("D6FdFNuWmVY")
+  const [userUrl, setUserUrl] = React.useState("https://www.youtube.com/watch?v=D6FdFNuWmVY")
   const [duration, setDuration] = React.useState(0)
   const [speed, setSpeed] = React.useState(1)
+  const [trackMin, setTrackMin] = React.useState(0)
+  const [trackMax, setTrackMax] = React.useState(duration / 10)
+  const [isZoomed, setIsZoomed] = React.useState(false)
+
   const pollingRef = React.useRef<NodeJS.Timeout | null>(null)
   const mssNums: string[] = React.useMemo(() => {
     const precomputedNums = []
@@ -25,15 +31,14 @@ export default function Home() {
     return precomputedNums
   }, [duration])
 
-  const seekToTime = async (timeInSeconds: number) => {
+  const seekToTime = React.useCallback(async (timeInSeconds: number) => {
     if (playerRef.current) {
       await playerRef.current.seekTo(timeInSeconds, true);
     }
-  };
+  }, []);
 
-  const snapToLoop = async () => {
+  const snapToLoop = React.useCallback(async () => {
     if (!sliderValues) return
-    console.log({ sliderValues })
     try {
       if (currentTime < sliderValues[0]!) {
         await seekToTime(sliderValues[0]!)
@@ -44,24 +49,25 @@ export default function Home() {
     } catch (err) {
       console.error(err)
     }
-  }
+  }, [sliderValues, currentTime, seekToTime])
 
-  const voidSnapToLoop = () => {
+  const voidSnapToLoop = React.useCallback(() => {
     void snapToLoop()
-  }
+  }, [snapToLoop])
+
   React.useMemo(() => {
     voidSnapToLoop()
-  }, [currentTime, snapToLoop])
+  }, [currentTime, voidSnapToLoop])
 
-  const changeSpeed = async (speed: number) => {
+  const changeSpeed = React.useCallback(async (speed: number) => {
     if (playerRef.current) {
       await playerRef.current.setPlaybackRate(speed)
     }
-  }
+  }, [])
 
-  const voidChangeSpeed = (speed: number) => {
+  const voidChangeSpeed = React.useCallback((speed: number) => {
     void changeSpeed(speed)
-  }
+  }, [changeSpeed])
 
   React.useMemo(() => {
     voidChangeSpeed(speed)
@@ -78,7 +84,7 @@ export default function Home() {
   }
 
   const handleResize = () => {
-    console.log('...resizing')
+    if (!window) return
     const width = window.innerWidth
     let playerWidth = width / 1.5
 
@@ -117,46 +123,28 @@ export default function Home() {
   })
   const updateDuration = async () => {
     if (!playerRef.current) return
-    try {
-      const newDuration = await playerRef.current.getDuration()
-      setDuration(newDuration * 10)
-    } catch (error) {
-      console.error("Failed to fetch duration:", error);
-    }
-  };
+    const newDuration = await playerRef.current.getDuration()
+    setDuration(newDuration * 10)
+    setTrackMax(newDuration)
+  }
 
   const updateTime = async () => {
     if (!playerRef.current) return
-    try {
-      const time = await playerRef.current.getCurrentTime();
-      setCurrentTime(time)
-    } catch (error) {
-      console.error("Failed to fetch duration:", error);
-    }
-
+    const time = await playerRef.current.getCurrentTime();
+    setCurrentTime(time)
   }
 
   const onPlayerReady: YouTubeProps['onReady'] = (event: { target: YouTubePlayer }) => {
-    // access to player in all event handlers via event.target
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     playerRef.current = event.target
-    console.log(playerRef.current)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    const duration = playerRef.current.getDuration()
     void updateDuration()
   }
 
-  const onStateChange = (e: YouTubeEvent) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const playerState = e.data;
+  const onStateChange = (e: YouTubeEvent<number>) => {
+    const playerState: number = e.data;
     if (playerState === 1) {
-      // Video is playing, start polling current time
-
       pollingRef.current = setInterval(() => {
         void updateTime()
-        // Update the state
-      }, 200); // Update every second
-
+      }, 50);
     } else {
       if (pollingRef.current) {
         clearInterval(pollingRef.current)
@@ -172,13 +160,38 @@ export default function Home() {
     }
   }, [userUrl])
 
+  const zoomTrack = (start: number, end: number) => {
+    setTrackMin(start)
+    setTrackMax(end)
+  }
+
+  const unZoomTrack = () => {
+    setTrackMax(duration / 10)
+    setTrackMin(0)
+  }
+
+  const playPause = async () => {
+    if (!playerRef.current) return
+    const playerState = await playerRef.current.getPlayerState()
+    const playing: PlayerStates = 1
+    if (playerState === playing) {
+      await playerRef.current.pauseVideo()
+    } else {
+      await playerRef.current.playVideo()
+    }
+  }
+
+  const voidPlayPause = () => {
+    void playPause()
+  }
+
   const thumbClasses = "absolute p-2 rounded-xl cursor-pointer text-white "
 
   return (
     <div className="bg-slate-700 flex flex-col justify-center pt-10 pb-60 min-h-screen">
       {/* <AuthShowcase /> */}
       <div className="flex flex-col gap-10 items-center pt-5">
-        <div className="bg-gray-200 p-5 rounded-lg w-11/12 sm:w-1/2 md:w-1/3">
+        <div className="bg-purple-500 p-5 rounded-lg w-11/12 sm:w-1/2 md:w-1/3">
           <label htmlFor="link" className="block text-sm/6 font-medium text-gray-900">
             Enter Your Youtube Link
           </label>
@@ -194,10 +207,11 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="w-full flex flex-col items-center gap-10">
+        <div className="w-full flex flex-col items-center gap-5">
           <YouTube className="select-none bg-gray-600 p-4 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={onPlayerReady} onStateChange={onStateChange} />
-          <div className="w-full flex justify-center items-center gap-10">
-            <div className="w-11/12 sm:w-2/3 md:w-1/2 bg-slate-600 p-5 pb-8 rounded-3xl">
+          <div className="flex flex-col justify-center items-center gap-10 w-11/12 sm:w-2/3 md:w-1/2 bg-gray-800 p-8 rounded-3xl">
+
+            <div className="w-full bg-slate-600 p-5 pb-8 rounded-3xl flex">
               <ReactSlider
                 value={sliderValues}
                 onAfterChange={(newSliderValues) => {
@@ -215,13 +229,27 @@ export default function Home() {
                     </div>
                   </div>
                 }
-                step={.1}
-                max={duration / 10}
-                minDistance={1}
+                step={.01}
+                min={trackMin}
+                max={trackMax} //duration is in 10th of a second ReactSlider takes arg in seconds
+                minDistance={.01}
               />
+            </div>
+            <div className="flex justify-between w-full">
+              <SpeedDropDown speed={speed} setSpeed={setSpeed} />
+              <PlayPauseIcon className="w-10 h-10 text-white cursor-pointer" onClick={() => voidPlayPause()} />
+              {isZoomed ?
+                <MagnifyingGlassMinusIcon className="w-10 h-10 text-white cursor-pointer" onClick={() => {
+                  setIsZoomed(false)
+                  unZoomTrack()
+                }} /> :
+                <MagnifyingGlassPlusIcon className="w-10 h-10 text-white cursor-pointer" onClick={() => {
+
+                  setIsZoomed(true)
+                  zoomTrack(sliderValues[0]!, sliderValues[1]!)
+                }} />}
 
             </div>
-            <SpeedDropDown speed={speed} setSpeed={setSpeed} />
           </div>
         </div>
       </div>
@@ -233,7 +261,7 @@ function AuthShowcase() {
   const { data: sessionData } = useSession();
 
   const { data: secretMessage } = api.post.getSecretMessage.useQuery(
-    undefined, // no input
+    undefined,
     { enabled: sessionData?.user !== undefined }
   );
 
