@@ -77,9 +77,10 @@ export default function Home() {
         playerWidth = width - 40
         break
     }
+    playerWidth = playerWidth
     const playerHeight = playerWidth * (9 / 16)
     if (playerRef.current) {
-      voidSetSize(playerWidth, playerHeight)
+      voidSetSize(playerWidth - 16, playerHeight - 16)
     }
   }
 
@@ -159,7 +160,7 @@ export default function Home() {
   const thumbClasses = "absolute p-2 rounded-xl cursor-pointer text-white "
 
   return (
-    <div className="bg-slate-700 h-screen flex flex-col justify-center pt-10 pb-40">
+    <div className="bg-slate-700 flex flex-col justify-center pt-10 pb-40">
       {/* <AuthShowcase /> */}
       <div className="flex flex-col gap-10 items-center pt-5">
         <div className="bg-gray-200 p-5 rounded-lg w-11/12 sm:w-1/2 md:w-1/3">
