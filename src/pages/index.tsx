@@ -1,5 +1,5 @@
 import { signIn, signOut, useSession } from "next-auth/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { api } from "~/utils/api";
 import { extractVideoId, fmtMSS } from "packages/helpers";
 import YouTube, { YouTubeProps, YouTubePlayer, YouTubeEvent } from 'react-youtube'
@@ -11,15 +11,15 @@ export default function Home() {
   const [intervalId, setIntervalId] = React.useState(null);
   const [videoId, setVideoId] = React.useState("p7BmgJSKzu4")
   const [userUrl, setUserUrl] = React.useState("https://youtube.com/watch?v=p7BmgJSKzu4")
-  const [duration, setDuration] = React.useState(100)
+  const [duration, setDuration] = React.useState(0)
 
   const mssNums: string[] = React.useMemo(() => {
     const precomputedNums = []
-    for (let i = 0; i < duration; i++) {
+    for (let i = 0; i <= duration; i++) {
       precomputedNums.push(fmtMSS(i))
     }
-  }, [videoId])
-
+    return precomputedNums
+  }, [duration])
 
   const seekToTime = (timeInSeconds: number) => {
     if (playerRef.current) {
@@ -54,20 +54,22 @@ export default function Home() {
   const onPlayerReady: YouTubeProps['onReady'] = (event: { target: YouTubePlayer }) => {
     // access to player in all event handlers via event.target
     playerRef.current = event.target
+    console.log(playerRef.current)
     setDuration(playerRef.current.getDuration())
   }
 
   const onStateChange = (e: YouTubeEvent) => {
     const playerState = e.data;
-
-
-    // Video is playing, start polling current time
-    const id = setInterval(() => {
-      const time = playerRef.current.getCurrentTime();
-      setCurrentTime(time); // Update the state
-    }, 1000); // Update every second
-    setIntervalId(id);
-
+    if (playerState === 1) {
+      // Video is playing, start polling current time
+      const id = setInterval(() => {
+        const time = playerRef.current.getCurrentTime();
+        setCurrentTime(time); // Update the state
+      }, 200); // Update every second
+      setIntervalId(id);
+    } else {
+      clearInterval(intervalId)
+    }
   };
 
   React.useMemo(() => {
@@ -78,24 +80,12 @@ export default function Home() {
     }
   }, [userUrl])
 
+  const thumbClasses = "absolute p-2 rounded-xl cursor-pointer text-white "
 
-
-  const thumbClasses = "relative bg-red-200 p-1 rounded-xl cursor-pointer "
-
-  function Thumb({ props, state }: { props: any, state: any }) {
-    return (
-      <div className="absolute">
-        <div id="pog" className="absolute left-0">#</div>
-        <div {...props} className={state.index ? `${thumbClasses + "top-0"}` : `${thumbClasses + "bottom-0"}`}>
-          {mssNums?.[state.valueNow] ?? fmtMSS(state.valueNow)}
-        </div>
-      </div>
-    )
-  }
   return (
-    <div>
+    <div className="bg-slate-700 h-screen">
       <AuthShowcase />
-      <div className="flex flex-col gap-10 items-center">
+      <div className="flex flex-col gap-10 items-center pt-5">
         <div className="bg-gray-200 p-5 rounded-lg w-1/3">
           <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
             Enter Your Youtube Link
@@ -114,28 +104,28 @@ export default function Home() {
 
         <div className="w-full flex flex-col items-center gap-10">
           <YouTube className="bg-black p-3 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={onPlayerReady} onStateChange={onStateChange} />
-          <div className="w-full flex justify-center">
-            <div className="w-5/12">
+          <div className="w-full flex justify-center items-center">
+            <div className="w-6/12 bg-slate-600 p-5 pb-8 rounded-3xl">
               <ReactSlider
                 value={sliderValues}
                 onAfterChange={(newSliderValues) => {
                   setSliderValues(newSliderValues)
-                  // snapToLoop()
+                  snapToLoop()
                 }}
-                className="horizontal-slider w-full relative"
-                thumbClassName="bg-red-400 p-1 rounded-lg cursor-pointer"
-                trackClassName="border-2 border-black border-4"
+                className="horizontal-slider w-full"
+                thumbClassName="bg-gray-200 p-1 cursor-pointer relative h-3"
+                trackClassName="border-2 border-purple-500 bg-purple-400 h-3 border-black border-4"
+                withTracks={true}
                 renderThumb={(props, state) =>
-                  <div className="absolute">
-
-                    <div {...props} className={state.index ? `${thumbClasses + "-bottom-10"}` : `${thumbClasses + "bottom-0"}`}>
-
-                      <p>{mssNums?.[state.valueNow] ?? fmtMSS(state.valueNow)}</p>
+                  <div {...props}>
+                    <div className={state.index ? `${thumbClasses + "-bottom-12 -right-5"}` : `${thumbClasses + "bottom-5 -right-5"}`}>
+                      <p>{mssNums[state.valueNow] ?? state.valueNow}</p>
                     </div>
                   </div>
                 }
                 step={1}
                 max={duration ?? 100}
+                minDistance={1}
               />
             </div>
           </div>
