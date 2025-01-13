@@ -191,13 +191,13 @@ export default function Home() {
     void playPause()
   }
 
-  const thumbClasses = "absolute p-2 rounded-xl cursor-pointer text-white "
+  const thumbClasses = "absolute p-2 rounded-xl cursor-pointer text-white border-gray-200 "
 
   return (
     <div className="bg-slate-700 flex flex-col justify-center pt-0 pb-0 min-h-screen">
       {/* <AuthShowcase /> */}
-      <div className="flex flex-col gap-5 items-center pt-0">
-        <div className="bg-purple-500 p-5 rounded-lg w-11/12 sm:w-1/2 md:w-1/3">
+      <div className="flex flex-col gap-5 items-center pt-0 m-0">
+        <div className="bg-purple-500 border-slate-900 border-2 p-5 rounded-lg w-11/12 sm:w-1/2 md:w-1/3">
           <label htmlFor="link" className="block text-sm/6 font-medium text-gray-900">
             Enter Your Youtube Link
           </label>
@@ -215,8 +215,7 @@ export default function Home() {
 
         <div className="w-full flex flex-col items-center gap-5">
           <YouTube className="select-none bg-gray-600 p-4 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={onPlayerReady} onStateChange={onStateChange} />
-          <div className="flex flex-col justify-center items-center gap-10 w-11/12 sm:w-2/3 md:w-7/12 bg-slate-800 border-slate-900 border-2 p-8 rounded-3xl">
-
+          <div className="flex flex-col justify-center items-center gap-10 w-full sm:w-2/3 md:w-7/12 bg-slate-800 border-slate-900 border-2 p-8 rounded-3xl">
             <div className="w-full bg-slate-600 p-5 pb-8 rounded-3xl flex">
               <ReactSlider
                 value={sliderValues}
@@ -225,12 +224,12 @@ export default function Home() {
                   void snapToLoop()
                 }}
                 className="horizontal-slider w-full"
-                thumbClassName="bg-gray-200 p-1 cursor-pointer relative h-3"
+                thumbClassName="bg-white p-1 cursor-pointer relative h-3"
                 trackClassName="border-2 border-purple-500 bg-purple-400 h-3 border-black border-4"
                 withTracks={true}
                 renderThumb={(props, state) =>
                   <div {...props}>
-                    <div className={state.index ? `${thumbClasses + "-bottom-12 -right-5"}` : `${thumbClasses + "bottom-5 -right-5"}`}>
+                    <div className={state.index ? `${thumbClasses + "-bottom-12 -right-5 border-b-2 border-gray-200"}` : `${thumbClasses + "bottom-5 -right-5 border-t-2"}`}>
                       <p className="select-none">{mssNums[Math.floor(state.valueNow)] ?? Math.floor(state.valueNow)}</p>
                     </div>
                   </div>
