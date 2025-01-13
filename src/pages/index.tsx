@@ -2,7 +2,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import React from "react";
 import { api } from "~/utils/api";
 import { extractVideoId, fmtMSS } from "packages/helpers";
-import YouTube, { YouTubeEvent, YouTubeProps } from 'react-youtube'
+import YouTube, { type YouTubeEvent, type YouTubeProps } from 'react-youtube'
 import type { YouTubePlayer } from 'youtube-player/dist/types'
 import ReactSlider from "react-slider";
 export default function Home() {
