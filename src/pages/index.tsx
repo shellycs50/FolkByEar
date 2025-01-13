@@ -79,12 +79,13 @@ export default function Home() {
       await playerRef.current.setSize(width, height)
     }
   }
-  const voidSetSize = (width: number, height: number) => {
-    void setSize(width, height)
-  }
 
-  const handleResize = () => {
+
+  const handleResize = React.useCallback(() => {
     if (!window) return
+    const voidSetSize = (width: number, height: number) => {
+      void setSize(width, height)
+    }
     const width = window.innerWidth
     let playerWidth = width / 1.5
 
@@ -104,13 +105,16 @@ export default function Home() {
     if (playerRef.current) {
       voidSetSize(playerWidth - 16, playerHeight - 16)
     }
-  }
+  }, [])
 
   const debouncedHandleResize = debounce(handleResize, 500)
 
   useEffect(() => {
+    setTimeout(() => {
+      handleResize()
+    }, 1500) // hack
     window.addEventListener("resize", debouncedHandleResize)
-  })
+  }, [debouncedHandleResize, handleResize])
 
 
   const playerOpts = React.useState({
@@ -121,6 +125,7 @@ export default function Home() {
     //   autoplay: 1,
     // },
   })
+
   const updateDuration = async () => {
     if (!playerRef.current) return
     const newDuration = await playerRef.current.getDuration()
@@ -137,6 +142,7 @@ export default function Home() {
   const onPlayerReady: YouTubeProps['onReady'] = (event: { target: YouTubePlayer }) => {
     playerRef.current = event.target
     void updateDuration()
+    handleResize()
   }
 
   const onStateChange = (e: YouTubeEvent<number>) => {
