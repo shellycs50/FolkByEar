@@ -2,17 +2,18 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import React, { useEffect } from "react";
 import { api } from "~/utils/api";
 import { extractVideoId, fmtMSS } from "packages/helpers";
-import YouTube, { YouTubeProps, YouTubePlayer, YouTubeEvent } from 'react-youtube'
+import YouTube, { YouTubeEvent, YouTubeProps } from 'react-youtube'
+import type { YouTubePlayer } from 'youtube-player/dist/types'
 import ReactSlider from "react-slider";
 export default function Home() {
   const [sliderValues, setSliderValues] = React.useState([0, 100])
-  const playerRef = React.useRef<YouTube | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  const playerRef = React.useRef<YouTubePlayer | null>(null);
   const [currentTime, setCurrentTime] = React.useState(0);
-  const [intervalId, setIntervalId] = React.useState(null);
   const [videoId, setVideoId] = React.useState("p7BmgJSKzu4")
   const [userUrl, setUserUrl] = React.useState("https://youtube.com/watch?v=p7BmgJSKzu4")
   const [duration, setDuration] = React.useState(0)
-
+  const pollingRef = React.useRef<NodeJS.Timeout | null>(null)
   const mssNums: string[] = React.useMemo(() => {
     const precomputedNums = []
     for (let i = 0; i <= duration; i++) {
@@ -23,7 +24,7 @@ export default function Home() {
 
   const seekToTime = (timeInSeconds: number) => {
     if (playerRef.current) {
-      playerRef.current.seekTo(timeInSeconds, true);  // 'true' for precise seeking
+      playerRef.current.seekTo(timeInSeconds, true);
     }
   };
 
@@ -53,22 +54,29 @@ export default function Home() {
 
   const onPlayerReady: YouTubeProps['onReady'] = (event: { target: YouTubePlayer }) => {
     // access to player in all event handlers via event.target
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     playerRef.current = event.target
     console.log(playerRef.current)
-    setDuration(playerRef.current.getDuration())
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    const duration = playerRef.current.getDuration()
+    setDuration(duration)
   }
 
   const onStateChange = (e: YouTubeEvent) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const playerState = e.data;
     if (playerState === 1) {
       // Video is playing, start polling current time
-      const id = setInterval(() => {
+      if (!playerRef.current) return
+      pollingRef.current = setInterval(() => {
         const time = playerRef.current.getCurrentTime();
         setCurrentTime(time); // Update the state
       }, 200); // Update every second
-      setIntervalId(id);
+
     } else {
-      clearInterval(intervalId)
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current)
+      }
     }
   };
 
@@ -86,8 +94,8 @@ export default function Home() {
     <div className="bg-slate-700 h-screen">
       <AuthShowcase />
       <div className="flex flex-col gap-10 items-center pt-5">
-        <div className="bg-gray-200 p-5 rounded-lg w-1/3">
-          <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
+        <div className="bg-gray-200 p-5 rounded-lg w-11/12 sm:w-1/2 md:w-1/3">
+          <label htmlFor="link" className="block text-sm/6 font-medium text-gray-900">
             Enter Your Youtube Link
           </label>
           <div className="mt-2">
@@ -105,7 +113,7 @@ export default function Home() {
         <div className="w-full flex flex-col items-center gap-10">
           <YouTube className="bg-black p-3 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={onPlayerReady} onStateChange={onStateChange} />
           <div className="w-full flex justify-center items-center">
-            <div className="w-6/12 bg-slate-600 p-5 pb-8 rounded-3xl">
+            <div className="w-11/12 sm:w-2/3 md:w-1/2 bg-slate-600 p-5 pb-8 rounded-3xl">
               <ReactSlider
                 value={sliderValues}
                 onAfterChange={(newSliderValues) => {
