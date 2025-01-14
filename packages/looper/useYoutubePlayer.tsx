@@ -3,6 +3,7 @@ import { useLooperStore } from "./store";
 import { type YouTubeEvent, type YouTubeProps } from "react-youtube";
 import type { YouTubePlayer } from 'youtube-player/dist/types'
 import type PlayerStates from "youtube-player/dist/constants/PlayerStates";
+
 export const useYouTubePlayer = () => {
     const {
         sliderValues,
@@ -20,7 +21,6 @@ export const useYouTubePlayer = () => {
             await playerRef.current.seekTo(timeInSeconds, true);
         }
     }, []);
-
 
     const snapToLoop = useCallback(async () => {
         if (!sliderValues) return
@@ -70,15 +70,15 @@ export const useYouTubePlayer = () => {
         const playerState: number = e.data;
 
         const poll = () => {
-            void updateTime(); // Call your updateTime logic
-            pollingRef.current = requestAnimationFrame(poll); // Schedule the next frame
+            void updateTime();
+            pollingRef.current = requestAnimationFrame(poll);
         };
 
-        if (playerState === 1) { // If playing
+        if (playerState === 1) {
             if (!pollingRef.current) {
                 pollingRef.current = requestAnimationFrame(poll);
             }
-        } else { // If paused or stopped
+        } else {
             if (pollingRef.current) {
                 cancelAnimationFrame(pollingRef.current);
                 pollingRef.current = null;
@@ -114,9 +114,9 @@ export const useYouTubePlayer = () => {
         setTrackMax(newDuration)
     }
     const setSize = async (width: number, height: number) => {
-        if (playerRef.current) {
-            await playerRef.current.setSize(width, height)
-        }
+        if (!playerRef.current) return
+        console.log({ width, height })
+        await playerRef.current.setSize(width, height)
     }
     const initialSizes = useMemo(() => {
         if (typeof window === 'undefined') return [0, 0]
@@ -160,6 +160,51 @@ export const useYouTubePlayer = () => {
         }
         playerWidth = playerWidth
         const playerHeight = playerWidth * (9 / 16)
+        voidSetSize(playerWidth - 16, playerHeight - 16)
+    }, [])
+
+    const initialBuilderSizes = useMemo(() => {
+        if (typeof window === 'undefined') return [0, 0]
+        const width = window.innerWidth
+        let playerWidth = width / 3
+
+        switch (true) {
+            case width > 1280:
+                playerWidth = width / 2
+                break
+            case width > 768:
+                playerWidth = width / 1.5
+                break
+            default:
+                playerWidth = width - 40
+                break
+        }
+        playerWidth = playerWidth
+        const playerHeight = playerWidth * (9 / 16)
+        return [playerWidth - 16, playerHeight - 16]
+    }, [])
+
+    const handleBuilderResize = useCallback(() => {
+        if (!window) return
+        const voidSetSize = (width: number, height: number) => {
+            void setSize(width, height)
+        }
+        const width = window.innerWidth
+        let playerWidth = width / 3
+
+        switch (true) {
+            case width > 1280:
+                playerWidth = width / 2
+                break
+            case width > 768:
+                playerWidth = width / 1.5
+                break
+            default:
+                playerWidth = width - 40
+                break
+        }
+        playerWidth = playerWidth
+        const playerHeight = playerWidth * (9 / 16)
         if (playerRef.current) {
             voidSetSize(playerWidth - 16, playerHeight - 16)
         }
@@ -172,5 +217,5 @@ export const useYouTubePlayer = () => {
         handleResize()
     }
 
-    return { voidPlayPause, onStateChange, updateTime, updateDuration, setSize, initialSizes, handleResize, onPlayerReady, voidSnapToLoop, voidChangeSpeed };
+    return { voidPlayPause, onStateChange, updateTime, updateDuration, setSize, initialSizes, handleResize, initialBuilderSizes, handleBuilderResize, onPlayerReady, voidSnapToLoop, voidChangeSpeed };
 };

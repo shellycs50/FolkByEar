@@ -7,7 +7,7 @@ import SpeedDropDown from "~/components/SpeedDropDown";
 import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, PlayPauseIcon } from "@heroicons/react/16/solid";
 import { useLooperStore } from "packages/looper/store";
 import { useYouTubePlayer } from "packages/looper/useYoutubePlayer";
-export default function Home() {
+export default function Looper() {
 
   const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, duration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
   const { voidPlayPause, onStateChange, initialSizes, handleResize, onPlayerReady, voidChangeSpeed, voidSnapToLoop } = useYouTubePlayer()
@@ -65,6 +65,7 @@ export default function Home() {
     }
   }, [setVideoId, userUrl])
 
+  const loopStore = useLooperStore()
   return (
     <div className="bg-slate-700 flex flex-col justify-center pt-0 pb-0 min-h-screen">
       {/* <AuthShowcase /> */}
