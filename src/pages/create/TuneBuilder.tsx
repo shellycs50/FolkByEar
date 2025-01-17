@@ -52,7 +52,10 @@ export default function CreateTune() {
 
     const debouncedHandleResize = debounce(yt.handleBuilderResize, 500)
 
-    window.addEventListener("resize", debouncedHandleResize)
+    if (typeof window !== "undefined") {
+        window.addEventListener("resize", debouncedHandleResize)
+    }
+
 
     const handleUrlChange = () => {
         if (userUrl.length < 24) return
