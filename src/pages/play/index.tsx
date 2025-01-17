@@ -2,7 +2,7 @@ import YouTube from "react-youtube"
 import { useYouTubePlayer } from "packages/looper/useYoutubePlayer"
 import React from "react"
 import PlayPauseIcon from "@heroicons/react/16/solid/PlayPauseIcon"
-const Play = () => {
+export default function Play() {
     const [data] = React.useState({
         videoId: "D6FdFNuWmVY",
         restTime: 1,
