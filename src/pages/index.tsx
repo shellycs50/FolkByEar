@@ -115,7 +115,7 @@ export default function Looper() {
               />
             </div>
             <div className="flex justify-between w-full">
-              <SpeedDropDown speed={speed} setSpeed={setSpeed} />
+              <SpeedDropDown speed={speed} setSpeed={setSpeed} voidChangeSpeed={voidChangeSpeed} />
               <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => voidPlayPause()} />
               {isZoomed ?
                 <MagnifyingGlassMinusIcon className="w-10 h-10 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => {
