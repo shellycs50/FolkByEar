@@ -1,9 +1,9 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { useLooperStore } from "packages/looper/store";
-import { useTuneBuilder } from '../store';
+import { useTuneBuilderStore } from '../store';
 export default function RepeatDropDown() {
     const info = useLooperStore()
-    const builder = useTuneBuilder()
+    const builder = useTuneBuilderStore()
     const selectedPhraseIdx = builder.selectedPhraseIdx
     const selectedPhrase = builder.phrases[selectedPhraseIdx]
     const repeats = selectedPhrase?.repeatCount ?? 3

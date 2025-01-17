@@ -3,7 +3,7 @@ import { extractVideoId, fmtMSS } from "packages/looper/helpers";
 import YouTube from 'react-youtube'
 import ReactSlider from "react-slider";
 import debounce from 'lodash.debounce'
-import SpeedDropDown from "~/components/SpeedDropDown";
+import SpeedDropDown from "packages/builder/components/SpeedDropDown";
 import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, PlayPauseIcon } from "@heroicons/react/16/solid";
 import { useLooperStore } from "packages/looper/store";
 import { useYouTubePlayer } from "packages/looper/useYoutubePlayer";

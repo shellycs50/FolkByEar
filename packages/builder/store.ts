@@ -21,7 +21,7 @@ interface StoreState {
   setVideoId: (id: string) => void;
   phrases: phrase[];
   setPhrases: (phrases: phrase[]) => void;
-  createPhrase: (endTime: number) => void;
+  createPhrase: (sliderValues: number[], duration: number) => void;
   deletePhrase: (idx: number) => void;
   restTime: number;
   setRestTime: (time: number) => void;
@@ -31,21 +31,21 @@ interface StoreState {
   setSpeed: (idx: number, speed: number) => void;
 }
 
-export const useTuneBuilder = create<StoreState>((set) => ({
+export const useTuneBuilderStore = create<StoreState>((set) => ({
   selectedPhraseIdx: 0,
   setSelectedPhrase: (idx) => set({ selectedPhraseIdx: idx }),
   videoId: null,
   setVideoId: (id) => set({ videoId: id }),
   phrases: [],
   setPhrases: (phrases) => set({ phrases: phrases }),
-  createPhrase: (endTime) =>
+  createPhrase: (sliderValues, duration) =>
     set((state) => ({
       phrases: [
         ...state.phrases,
         {
           idx: state.phrases.length,
-          startTime: 0,
-          endTime: endTime,
+          startTime: sliderValues[0] ?? 0,
+          endTime: sliderValues[1] ?? duration,
           repeatCount: 3,
           speed: 1,
         },
@@ -56,7 +56,7 @@ export const useTuneBuilder = create<StoreState>((set) => ({
     set((state) => ({
       phrases: state.phrases.filter((phrase) => phrase.idx !== idx),
     })),
-  restTime: 0,
+  restTime: 1,
   setRestTime: (time) => set({ restTime: time }),
   setRepeatCount: (idx, count) => {
     set((state) => {
