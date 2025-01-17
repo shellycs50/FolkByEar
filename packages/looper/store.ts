@@ -1,5 +1,5 @@
 import React from "react";
-import { YouTubePlayer } from "youtube-player/dist/types";
+import { type YouTubePlayer } from "youtube-player/dist/types";
 import { create } from "zustand";
 
 interface StoreState {
@@ -24,7 +24,6 @@ interface StoreState {
   setIsZoomed: (zoomed: boolean) => void;
 }
 
-// Create the Zustand store
 export const useLooperStore = create<StoreState>((set) => ({
   sliderValues: [26.67, 29.39],
   setSliderValues: (values) => set({ sliderValues: values }),

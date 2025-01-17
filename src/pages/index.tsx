@@ -3,11 +3,11 @@ import { extractVideoId, fmtMSS } from "packages/looper/helpers";
 import YouTube from 'react-youtube'
 import ReactSlider from "react-slider";
 import debounce from 'lodash.debounce'
-import SpeedDropDown from "~/components/SpeedDropDown";
+import SpeedDropDown from "packages/builder/components/SpeedDropDown";
 import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, PlayPauseIcon } from "@heroicons/react/16/solid";
 import { useLooperStore } from "packages/looper/store";
 import { useYouTubePlayer } from "packages/looper/useYoutubePlayer";
-export default function Home() {
+export default function Looper() {
 
   const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, duration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
   const { voidPlayPause, onStateChange, initialSizes, handleResize, onPlayerReady, voidChangeSpeed, voidSnapToLoop } = useYouTubePlayer()
@@ -65,6 +65,7 @@ export default function Home() {
     }
   }, [setVideoId, userUrl])
 
+  const loopStore = useLooperStore()
   return (
     <div className="bg-slate-700 flex flex-col justify-center pt-0 pb-0 min-h-screen">
       {/* <AuthShowcase /> */}
@@ -114,7 +115,7 @@ export default function Home() {
               />
             </div>
             <div className="flex justify-between w-full">
-              <SpeedDropDown speed={speed} setSpeed={setSpeed} />
+              <SpeedDropDown speed={speed} setSpeed={setSpeed} voidChangeSpeed={voidChangeSpeed} />
               <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => voidPlayPause()} />
               {isZoomed ?
                 <MagnifyingGlassMinusIcon className="w-10 h-10 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => {
