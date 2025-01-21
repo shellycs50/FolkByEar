@@ -83,7 +83,7 @@ export default function CreateTune() {
     const { createPhrase } = builder
 
     const updatePhrases = useCallback((sliderValues: number[] = [0, duration]) => {
-        if (!builder.selectedPhraseIdx) return
+        if (!phrases[builder.selectedPhraseIdx]) return
         const newPhrases = [...phrases]
         newPhrases[builder.selectedPhraseIdx]!.startTime = sliderValues[0]!
         newPhrases[builder.selectedPhraseIdx]!.endTime = sliderValues[1]!
@@ -121,6 +121,7 @@ export default function CreateTune() {
 
                     <pre className="text-white text-xs bg-slate-800 p-2 rounded-lg overflow-auto fixed">
                         {JSON.stringify(builder, null, 2)}
+                        {JSON.stringify({ sliderValues }, null, 2)}
                     </pre>
                     <div className="flex flex-col gap-5 items-center justify-center pt-0 m-0 w-full">
                         <div className="w-full flex flex-col items-center gap-5">
@@ -157,7 +158,12 @@ export default function CreateTune() {
                                     <a className={clsx(
                                         'bg-slate-900 text-white p-3 rounded-2xl cursor-pointer',
                                         { 'border-4 border-green-500': builder.phrases.length === 0 }
-                                    )} onClick={() => createPhrase(sliderValues, duration)}><p>Create New</p></a>
+                                    )} onClick={() => {
+                                        const start = phrases[phrases.length - 1]?.endTime ?? 0
+                                        setSliderValues([start, start + 5])
+                                        createPhrase()
+
+                                    }}><p>Create New</p></a>
                                     <RepeatDropDown />
                                     <SpeedDropDown speed={speed} setSpeed={setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
                                     <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => yt.voidPlayPause()} />

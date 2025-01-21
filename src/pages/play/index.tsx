@@ -4,45 +4,25 @@ import React from "react"
 import PlayPauseIcon from "@heroicons/react/16/solid/PlayPauseIcon"
 export default function Play() {
     const [data] = React.useState({
-        videoId: "D6FdFNuWmVY",
-        restTime: 1,
-        phrases: [
+        "selectedPhraseIdx": 0,
+        "videoId": "Ct-oGOAQAzk",
+        "phrases": [
             {
                 "idx": 0,
-                "startTime": 26.91,
-                "endTime": 31.005,
-                "repeatCount": 3,
-                "speed": 1
+                "startTime": 187.1,
+                "endTime": 196.305,
+                "repeatCount": 5,
+                "speed": 0.7
             },
             {
                 "idx": 1,
-                "startTime": 13.05,
-                "endTime": 19.355,
-                "repeatCount": 3,
-                "speed": 1
-            },
-            {
-                "idx": 2,
-                "startTime": 45.225,
-                "endTime": 48.875,
-                "repeatCount": 3,
-                "speed": 0.8
-            },
-            {
-                "idx": 3,
-                "startTime": 7.85,
-                "endTime": 10.805,
+                "startTime": 203.75,
+                "endTime": 212.32,
                 "repeatCount": 5,
-                "speed": 1.5
-            },
-            {
-                "idx": 4,
-                "startTime": 7.85,
-                "endTime": 10.805,
-                "repeatCount": 3,
                 "speed": 1
             }
-        ]
+        ],
+        "restTime": 1
     })
 
     const yt = useYouTubePlayer()
@@ -56,7 +36,7 @@ export default function Play() {
     })
 
     // state variable: currentPhrase: tracking current phrase. 
-    // state variable repeatTracker: tracking repeats (inits to current and decrements making original data not mutate)
+    // state variable repeatTracker: tracking repeats (inits to current phrase's repeat count and decrements making original data not mutate)
     // when repeatTracker reaches 0, move to next phrase.
     // modulo length so we loop back to first phrase at the end
     // loop through phrases 
