@@ -5,7 +5,6 @@ import { create } from "zustand";
 interface StoreState {
   sliderValues: number[];
   setSliderValues: (values: number[]) => void;
-  playerRef: React.RefObject<YouTubePlayer | null>;
   currentTime: number;
   setCurrentTime: (time: number) => void;
   videoId: string;
@@ -27,7 +26,6 @@ interface StoreState {
 export const useLooperStore = create<StoreState>((set) => ({
   sliderValues: [26.67, 29.39],
   setSliderValues: (values) => set({ sliderValues: values }),
-  playerRef: React.createRef<YouTubePlayer | null>(),
   currentTime: 0,
   setCurrentTime: (time) => set({ currentTime: time }),
   videoId: "D6FdFNuWmVY",

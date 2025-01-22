@@ -1,10 +1,19 @@
 import { useRef, useCallback, useMemo } from "react";
-import { useLooperStore } from "./store";
 import { type YouTubeEvent, type YouTubeProps } from "react-youtube";
 import type { YouTubePlayer } from 'youtube-player/dist/types'
 import type PlayerStates from "youtube-player/dist/constants/PlayerStates";
 
-export const useYouTubePlayer = () => {
+interface LooperDependencies {
+    sliderValues: number[]
+    setTrackMax?: (value: number) => void;
+    currentTime: number;
+    setCurrentTime: (time: number) => void;
+    setDuration: (duration: number) => void;
+    setSpeed: (speed: number) => void;
+}
+
+
+export const useYouTubePlayer = (stateDeps: LooperDependencies) => {
     const {
         sliderValues,
         setTrackMax,
@@ -12,10 +21,15 @@ export const useYouTubePlayer = () => {
         setCurrentTime,
         setDuration,
         setSpeed
-    } = useLooperStore();
+    } = stateDeps
+    // [start, end] : times for loop
+    // setTrackMax, setDuration : optional setter for UI and duration (maybe dont need to be separate)
+    // [currentTime, setCurrentTime] : state representing current playback time 
+    // setSpeed (passing allows reset of speed on video change)
 
     const playerRef = useRef<YouTubePlayer | null>(null);
     const pollingRef = useRef<number | null>(null)
+
     const seekToTime = useCallback(async (timeInSeconds: number) => {
         if (playerRef.current) {
             await playerRef.current.seekTo(timeInSeconds, true);
@@ -23,7 +37,9 @@ export const useYouTubePlayer = () => {
     }, []);
 
     const snapToLoop = useCallback(async () => {
+
         if (!sliderValues) return
+
         try {
             if (currentTime < sliderValues[0]!) {
                 await seekToTime(sliderValues[0]!)
@@ -102,6 +118,7 @@ export const useYouTubePlayer = () => {
     // };
 
     const updateTime = async () => {
+        console.log('man is updating')
         if (!playerRef.current) return
         const time = await playerRef.current.getCurrentTime();
         setCurrentTime(time)
@@ -111,7 +128,7 @@ export const useYouTubePlayer = () => {
         if (!playerRef.current) return
         const newDuration = await playerRef.current.getDuration()
         setDuration(newDuration * 10)
-        setTrackMax(newDuration)
+        if (setTrackMax) setTrackMax(newDuration)
     }
     const setSize = async (width: number, height: number) => {
         if (!playerRef.current) return

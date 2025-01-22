@@ -15,7 +15,7 @@ export default function SpeedDropDown({ speed, setSpeed, voidChangeSpeed }: { sp
           value={speed}
           onChange={(e) => {
             setSpeed(parseFloat(e.target.value))
-            builder.setSpeed(builder.selectedPhraseIdx, parseFloat(e.target.value))
+            builder.setCurrentSpeed(builder.selectedPhraseIdx, parseFloat(e.target.value))
             voidChangeSpeed(parseFloat(e.target.value))
           }
           }

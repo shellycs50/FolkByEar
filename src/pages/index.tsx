@@ -9,11 +9,20 @@ import { useLooperStore } from "packages/looper/store";
 import { useYouTubePlayer } from "packages/looper/useYoutubePlayer";
 export default function Looper() {
 
-  const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, duration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
-  const { voidPlayPause, onStateChange, initialSizes, handleResize, onPlayerReady, voidChangeSpeed, voidSnapToLoop } = useYouTubePlayer()
+  const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
+
+  const yt = useYouTubePlayer({
+    sliderValues,
+    setTrackMax,
+    currentTime,
+    setCurrentTime,
+    setDuration,
+    setSpeed
+  })
+
   const playerOpts = React.useState({
-    height: initialSizes[1],
-    width: initialSizes[0],
+    height: yt.initialSizes[1],
+    width: yt.initialSizes[0],
     // playerVars: {
     //   // https://developers.google.com/youtube/player_parameters
 
@@ -43,19 +52,19 @@ export default function Looper() {
     setTrackMin(0)
   }
 
-  const debouncedHandleResize = debounce(handleResize, 500)
+  const debouncedHandleResize = debounce(yt.handleResize, 500)
 
   useEffect(() => {
-    voidSnapToLoop()
-  }, [currentTime, voidSnapToLoop])
+    yt.voidSnapToLoop()
+  }, [currentTime, yt.voidSnapToLoop])
 
   useEffect(() => {
-    voidChangeSpeed(speed)
-  }, [speed, voidChangeSpeed])
+    yt.voidChangeSpeed(speed)
+  }, [speed, yt.voidChangeSpeed])
 
   useEffect(() => {
     window.addEventListener("resize", debouncedHandleResize)
-  }, [debouncedHandleResize, handleResize])
+  }, [debouncedHandleResize, yt.handleResize])
 
   useEffect(() => {
     if (userUrl.length < 24) return
@@ -65,7 +74,7 @@ export default function Looper() {
     }
   }, [setVideoId, userUrl])
 
-  const loopStore = useLooperStore()
+
   return (
     <div className="bg-slate-700 flex flex-col justify-center pt-0 pb-0 min-h-screen">
       {/* <AuthShowcase /> */}
@@ -87,7 +96,7 @@ export default function Looper() {
         </div>
 
         <div className="w-full flex flex-col items-center gap-5">
-          <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={onPlayerReady} onStateChange={onStateChange} />
+          <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
           <div className="flex flex-col justify-center items-center gap-10 w-full sm:w-2/3 md:w-7/12 bg-slate-800 border-slate-900 border-2 p-8 rounded-3xl">
             <div className="w-full bg-slate-600 p-5 pb-8 rounded-3xl flex">
 
@@ -95,7 +104,7 @@ export default function Looper() {
                 value={sliderValues}
                 onAfterChange={(newSliderValues) => {
                   setSliderValues(newSliderValues)
-                  voidSnapToLoop()
+                  yt.voidSnapToLoop()
                 }}
                 className="horizontal-slider w-full"
                 thumbClassName="bg-white p-1 cursor-pointer relative h-3"
@@ -115,8 +124,8 @@ export default function Looper() {
               />
             </div>
             <div className="flex justify-between w-full">
-              <SpeedDropDown speed={speed} setSpeed={setSpeed} voidChangeSpeed={voidChangeSpeed} />
-              <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => voidPlayPause()} />
+              <SpeedDropDown speed={speed} setSpeed={setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
+              <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => yt.voidPlayPause()} />
               {isZoomed ?
                 <MagnifyingGlassMinusIcon className="w-10 h-10 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => {
                   setIsZoomed(false)

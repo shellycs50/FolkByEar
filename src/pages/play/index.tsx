@@ -2,6 +2,7 @@ import YouTube from "react-youtube"
 import { useYouTubePlayer } from "packages/looper/useYoutubePlayer"
 import React from "react"
 import PlayPauseIcon from "@heroicons/react/16/solid/PlayPauseIcon"
+import { usePlayerStore } from "packages/player/store"
 export default function Play() {
     const [data] = React.useState({
         "selectedPhraseIdx": 0,
@@ -24,14 +25,29 @@ export default function Play() {
         ],
         "restTime": 1
     })
+    const phrasePlayer = usePlayerStore()
 
-    const yt = useYouTubePlayer()
-    const playerOpts = React.useState({
+    const {
+        sliderValues,
+        currentTime,
+        setCurrentTime,
+        setDuration,
+        setSpeed } = phrasePlayer
+
+    const yt = useYouTubePlayer({
+        sliderValues,
+        currentTime,
+        setCurrentTime,
+        setDuration,
+        setSpeed
+    })
+
+    // playerOpts doesnt need to be state
+    const [playerOpts] = React.useState({
         height: yt.initialBuilderSizes[1],
         width: yt.initialBuilderSizes[0],
         // playerVars: {
         //   // https://developers.google.com/youtube/player_parameters
-
         // },
     })
 
@@ -41,11 +57,14 @@ export default function Play() {
     // modulo length so we loop back to first phrase at the end
     // loop through phrases 
 
-    const currentPhrase = React.useState(0)
-    const repeatTracker = React.useState(data.phrases[0]?.repeatCount)
+    // 
+    // on first play: 
+
+
+
     return (
-        <div>
-            <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={data.videoId} opts={playerOpts[0]} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
+        <div className="flex flex-col items-center justify-center h-screen gap-5">
+            <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={data.videoId} opts={playerOpts} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
             <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => yt.voidPlayPause()} />
         </div>
     )

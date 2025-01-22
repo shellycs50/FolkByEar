@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect } from "react";
 import { extractVideoId, fmtMSS } from "packages/looper/helpers";
 import YouTube from 'react-youtube'
 import ReactSlider from "react-slider";
@@ -9,14 +9,25 @@ import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, PlayPauseIcon } from
 import { useLooperStore } from "packages/looper/store";
 import { useYouTubePlayer } from "packages/looper/useYoutubePlayer";
 import { useTuneBuilderStore } from "packages/builder/store";
-import Controls from "packages/builder/components/Controls";
 import RepeatDropDown from "packages/builder/components/RepeatDropDown";
 import { PhraseVisualizer } from "packages/builder/components/PhraseVisualizer";
 import clsx from "clsx";
 export default function CreateTune() {
 
-    const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, duration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
-    const yt = useYouTubePlayer()
+    const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
+    const { voidSnapToLoop, ...yt } = useYouTubePlayer({
+        sliderValues,
+        setTrackMax,
+        currentTime,
+        setCurrentTime,
+        setDuration,
+        setSpeed
+    })
+
+    const builder = useTuneBuilderStore()
+    const { phrases } = builder
+    const { createPhrase } = builder
+
 
     const playerOpts = React.useState({
         height: yt.initialBuilderSizes[1],
@@ -65,7 +76,6 @@ export default function CreateTune() {
         }
     }
 
-    const builder = useTuneBuilderStore()
 
     const [validUrl, setValidUrl] = React.useState<boolean | null>(null)
     const submitUrl = () => {
@@ -79,8 +89,6 @@ export default function CreateTune() {
         }
     }
 
-    const { phrases } = builder
-    const { createPhrase } = builder
 
     const updatePhrases = useCallback((sliderValues: number[] = [0, duration]) => {
         if (!phrases[builder.selectedPhraseIdx]) return
@@ -90,6 +98,10 @@ export default function CreateTune() {
         builder.setPhrases(newPhrases)
     }, [builder, duration, phrases])
 
+
+    useEffect(() => {
+        voidSnapToLoop()
+    }, [currentTime, voidSnapToLoop])
 
     return (
         <>
@@ -122,6 +134,7 @@ export default function CreateTune() {
                     <pre className="text-white text-xs bg-slate-800 p-2 rounded-lg overflow-auto fixed">
                         {JSON.stringify(builder, null, 2)}
                         {JSON.stringify({ sliderValues }, null, 2)}
+                        {currentTime}
                     </pre>
                     <div className="flex flex-col gap-5 items-center justify-center pt-0 m-0 w-full">
                         <div className="w-full flex flex-col items-center gap-5">
@@ -134,7 +147,7 @@ export default function CreateTune() {
                                         onAfterChange={(newSliderValues) => {
                                             updatePhrases(newSliderValues)
                                             setSliderValues(newSliderValues)
-                                            yt.voidSnapToLoop()
+                                            voidSnapToLoop()
                                         }}
                                         className="horizontal-slider w-full"
                                         thumbClassName="bg-white p-1 cursor-pointer relative h-3"
@@ -160,8 +173,9 @@ export default function CreateTune() {
                                         { 'border-4 border-green-500': builder.phrases.length === 0 }
                                     )} onClick={() => {
                                         const start = phrases[phrases.length - 1]?.endTime ?? 0
+                                        const repeatCount = phrases[phrases.length - 1]?.repeatCount ?? 3
                                         setSliderValues([start, start + 5])
-                                        createPhrase()
+                                        createPhrase(speed, repeatCount)
 
                                     }}><p>Create New</p></a>
                                     <RepeatDropDown />
