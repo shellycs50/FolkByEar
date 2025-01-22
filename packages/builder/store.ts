@@ -21,14 +21,14 @@ interface StoreState {
   setVideoId: (id: string) => void;
   phrases: phrase[];
   setPhrases: (phrases: phrase[]) => void;
-  createPhrase: (sliderValues: number[], duration: number) => void;
+  createPhrase: (speed: number, repeatCount: number) => void;
   deletePhrase: (idx: number) => void;
   restTime: number;
   setRestTime: (time: number) => void;
   selectedPhraseIdx: number;
   setSelectedPhrase: (idx: number) => void;
   setRepeatCount: (idx: number, count: number) => void;
-  setSpeed: (idx: number, speed: number) => void;
+  setCurrentSpeed: (idx: number, speed: number) => void;
 }
 
 export const useTuneBuilderStore = create<StoreState>((set) => ({
@@ -38,20 +38,23 @@ export const useTuneBuilderStore = create<StoreState>((set) => ({
   setVideoId: (id) => set({ videoId: id }),
   phrases: [],
   setPhrases: (phrases) => set({ phrases: phrases }),
-  createPhrase: (sliderValues, duration) =>
-    set((state) => ({
-      phrases: [
-        ...state.phrases,
-        {
-          idx: state.phrases.length,
-          startTime: sliderValues[0] ?? 0,
-          endTime: sliderValues[1] ?? duration,
-          repeatCount: 3,
-          speed: 1,
-        },
-      ],
-      selectedPhraseIdx: state.phrases.length,
-    })),
+  createPhrase: (speed, repeatCount) =>
+    set((state) => {
+      const start = state.phrases[state.phrases.length - 1]?.endTime ?? 0;
+      return {
+        phrases: [
+          ...state.phrases,
+          {
+            idx: state.phrases.length,
+            startTime: start,
+            endTime: start + 5,
+            repeatCount: repeatCount,
+            speed: speed,
+          },
+        ],
+        selectedPhraseIdx: state.phrases.length ?? 0,
+      };
+    }),
   deletePhrase: (idx) =>
     set((state) => ({
       phrases: state.phrases.filter((phrase) => phrase.idx !== idx),
@@ -66,7 +69,7 @@ export const useTuneBuilderStore = create<StoreState>((set) => ({
       return { phrases: newPhrases };
     });
   },
-  setSpeed: (idx: number, speed: number) => {
+  setCurrentSpeed: (idx: number, speed: number) => {
     set((state) => {
       const newPhrases = [...state.phrases];
       if (!newPhrases[idx]) return state;

@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback } from "react";
 import { extractVideoId, fmtMSS } from "packages/looper/helpers";
 import YouTube from 'react-youtube'
 import ReactSlider from "react-slider";
@@ -9,14 +9,25 @@ import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, PlayPauseIcon } from
 import { useLooperStore } from "packages/looper/store";
 import { useYouTubePlayer } from "packages/looper/useYoutubePlayer";
 import { useTuneBuilderStore } from "packages/builder/store";
-import Controls from "packages/builder/components/Controls";
 import RepeatDropDown from "packages/builder/components/RepeatDropDown";
 import { PhraseVisualizer } from "packages/builder/components/PhraseVisualizer";
 import clsx from "clsx";
+import Link from "next/link";
 export default function CreateTune() {
 
-    const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, duration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
-    const yt = useYouTubePlayer()
+    const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
+    const yt = useYouTubePlayer({
+        sliderValues,
+        setTrackMax,
+        setCurrentTime,
+        setDuration,
+        setSpeed
+    })
+
+    const builder = useTuneBuilderStore()
+    const { phrases } = builder
+    const { createPhrase } = builder
+
 
     const playerOpts = React.useState({
         height: yt.initialBuilderSizes[1],
@@ -65,7 +76,6 @@ export default function CreateTune() {
         }
     }
 
-    const builder = useTuneBuilderStore()
 
     const [validUrl, setValidUrl] = React.useState<boolean | null>(null)
     const submitUrl = () => {
@@ -79,11 +89,9 @@ export default function CreateTune() {
         }
     }
 
-    const { phrases } = builder
-    const { createPhrase } = builder
 
     const updatePhrases = useCallback((sliderValues: number[] = [0, duration]) => {
-        if (!builder.selectedPhraseIdx) return
+        if (!phrases[builder.selectedPhraseIdx]) return
         const newPhrases = [...phrases]
         newPhrases[builder.selectedPhraseIdx]!.startTime = sliderValues[0]!
         newPhrases[builder.selectedPhraseIdx]!.endTime = sliderValues[1]!
@@ -91,10 +99,16 @@ export default function CreateTune() {
     }, [builder, duration, phrases])
 
 
+
+
     return (
         <>
             {!builder.videoId ? (
                 <div className="h-screen flex justify-center items-center bg-slate-700">
+                    <div className="fixed top-2 right-2">
+                        <Link href="/play"
+                            className="bg-slate-900 text-white p-3 rounded-2xl">Go to Player</Link>
+                    </div>
                     <div className="bg-purple-400 border-slate-900 border-2 p-5 rounded-lg w-11/12 sm:w-1/2 md:w-1/2 flex flex-col items-center">
                         <label htmlFor="link" className="block text-sm/6 font-medium text-gray-900 ">
                             First Enter a Youtube Link
@@ -118,10 +132,13 @@ export default function CreateTune() {
                 </div>
             ) : (
                 <div className="bg-slate-700 flex flex-col justify-center pt-0 pb-0 min-h-screen">
+                    <div className="fixed top-2 right-2">
+                        <Link href="/play"
+                            className="bg-slate-900 text-white p-3 rounded-2xl">Go to Player</Link>
+                    </div>
+                    <textarea className="h-1/2 text-white text-xs bg-slate-800 p-2 rounded-lg overflow-auto fixed" value={JSON.stringify(builder, null, 2)}>
 
-                    <pre className="text-white text-xs bg-slate-800 p-2 rounded-lg overflow-auto fixed">
-                        {JSON.stringify(builder, null, 2)}
-                    </pre>
+                    </textarea>
                     <div className="flex flex-col gap-5 items-center justify-center pt-0 m-0 w-full">
                         <div className="w-full flex flex-col items-center gap-5">
                             <PhraseVisualizer />
@@ -133,7 +150,7 @@ export default function CreateTune() {
                                         onAfterChange={(newSliderValues) => {
                                             updatePhrases(newSliderValues)
                                             setSliderValues(newSliderValues)
-                                            yt.voidSnapToLoop()
+                                            // voidSnapToLoop()
                                         }}
                                         className="horizontal-slider w-full"
                                         thumbClassName="bg-white p-1 cursor-pointer relative h-3"
@@ -157,7 +174,13 @@ export default function CreateTune() {
                                     <a className={clsx(
                                         'bg-slate-900 text-white p-3 rounded-2xl cursor-pointer',
                                         { 'border-4 border-green-500': builder.phrases.length === 0 }
-                                    )} onClick={() => createPhrase(sliderValues, duration)}><p>Create New</p></a>
+                                    )} onClick={() => {
+                                        const start = phrases[phrases.length - 1]?.endTime ?? 0
+                                        const repeatCount = phrases[phrases.length - 1]?.repeatCount ?? 3
+                                        setSliderValues([start, start + 5])
+                                        createPhrase(speed, repeatCount)
+
+                                    }}><p>Create New</p></a>
                                     <RepeatDropDown />
                                     <SpeedDropDown speed={speed} setSpeed={setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
                                     <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => yt.voidPlayPause()} />
