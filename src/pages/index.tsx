@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { extractVideoId, fmtMSS } from "packages/looper/helpers";
 import YouTube from 'react-youtube'
 import ReactSlider from "react-slider";
-import debounce from 'lodash.debounce'
 import SpeedDropDown from "packages/builder/components/SpeedDropDown";
 import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, PlayPauseIcon } from "@heroicons/react/16/solid";
 import { useLooperStore } from "packages/looper/store";
@@ -14,7 +13,6 @@ export default function Looper() {
   const yt = useYouTubePlayer({
     sliderValues,
     setTrackMax,
-    currentTime,
     setCurrentTime,
     setDuration,
     setSpeed
@@ -52,28 +50,16 @@ export default function Looper() {
     setTrackMin(0)
   }
 
-  const debouncedHandleResize = debounce(yt.handleResize, 500)
 
-  useEffect(() => {
-    yt.voidSnapToLoop()
-  }, [currentTime, yt.voidSnapToLoop])
 
-  useEffect(() => {
-    yt.voidChangeSpeed(speed)
-  }, [speed, yt.voidChangeSpeed])
-
-  useEffect(() => {
-    window.addEventListener("resize", debouncedHandleResize)
-  }, [debouncedHandleResize, yt.handleResize])
-
-  useEffect(() => {
+  const onUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserUrl(e.target.value)
     if (userUrl.length < 24) return
     const id = extractVideoId(userUrl)
     if (id) {
       setVideoId(id)
     }
-  }, [setVideoId, userUrl])
-
+  }
 
   return (
     <div className="bg-slate-700 flex flex-col justify-center pt-0 pb-0 min-h-screen">
@@ -89,7 +75,7 @@ export default function Looper() {
               name="link"
               type="link"
               value={userUrl}
-              onChange={(e) => setUserUrl(e.target.value)}
+              onChange={onUrlChange}
               className="text-center block w-full rounded-md bg-slate-200 px-3 py-1.5 font-semibold text-gray-900 outline outline-1 -outline-offset-1 outline-slate-400 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 lg:text-base"
             />
           </div>
@@ -104,7 +90,6 @@ export default function Looper() {
                 value={sliderValues}
                 onAfterChange={(newSliderValues) => {
                   setSliderValues(newSliderValues)
-                  yt.voidSnapToLoop()
                 }}
                 className="horizontal-slider w-full"
                 thumbClassName="bg-white p-1 cursor-pointer relative h-3"

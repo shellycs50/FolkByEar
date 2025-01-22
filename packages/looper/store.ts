@@ -1,5 +1,3 @@
-import React from "react";
-import { type YouTubePlayer } from "youtube-player/dist/types";
 import { create } from "zustand";
 
 interface StoreState {

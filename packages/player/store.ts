@@ -9,7 +9,8 @@ interface PlayerState {
   setDuration: (duration: number) => void;
   speed: number;
   setSpeed: (speed: number) => void;
-
+  hasStarted: boolean;
+  setHasStarted: (hasStarted: boolean) => void;
   // player specific
   currentPhraseIdx: number;
   setCurrentPhraseIdx: (idx: number) => void;
@@ -32,4 +33,6 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   currentPhraseRepeatCount: null,
   setCurrentPhraseRepeatCount: (count) =>
     set({ currentPhraseRepeatCount: count }),
+  hasStarted: false,
+  setHasStarted: (hasStarted) => set({ hasStarted: hasStarted }),
 }));

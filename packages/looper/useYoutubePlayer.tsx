@@ -6,10 +6,10 @@ import type PlayerStates from "youtube-player/dist/constants/PlayerStates";
 interface LooperDependencies {
     sliderValues: number[]
     setTrackMax?: (value: number) => void;
-    currentTime: number;
     setCurrentTime: (time: number) => void;
     setDuration: (duration: number) => void;
     setSpeed: (speed: number) => void;
+    onLoop?: () => void; //optional callback when player loops back
 }
 
 
@@ -17,10 +17,10 @@ export const useYouTubePlayer = (stateDeps: LooperDependencies) => {
     const {
         sliderValues,
         setTrackMax,
-        currentTime,
         setCurrentTime,
         setDuration,
-        setSpeed
+        setSpeed,
+        onLoop
     } = stateDeps
     // [start, end] : times for loop
     // setTrackMax, setDuration : optional setter for UI and duration (maybe dont need to be separate)
@@ -29,6 +29,7 @@ export const useYouTubePlayer = (stateDeps: LooperDependencies) => {
 
     const playerRef = useRef<YouTubePlayer | null>(null);
     const pollingRef = useRef<number | null>(null)
+    // const pollingRef = useRef<NodeJS.Timeout | null>(null)
 
     const seekToTime = useCallback(async (timeInSeconds: number) => {
         if (playerRef.current) {
@@ -36,24 +37,22 @@ export const useYouTubePlayer = (stateDeps: LooperDependencies) => {
         }
     }, []);
 
-    const snapToLoop = useCallback(async () => {
-
-        if (!sliderValues) return
-
+    const snapToLoop = useCallback(async (time: number) => {
+        if (!sliderValues || sliderValues[0] === 0 && sliderValues[1] === 0) return
         try {
-            if (currentTime < sliderValues[0]!) {
+            if (time < sliderValues[0]!) {
                 await seekToTime(sliderValues[0]!)
-            }
-            if (currentTime > sliderValues[1]!) {
+            } else if (time > (sliderValues[1] ?? 0)) {
+                if (onLoop) onLoop()
                 await seekToTime(sliderValues[0]!)
             }
         } catch (err) {
             console.error(err)
         }
-    }, [sliderValues, currentTime, seekToTime])
+    }, [sliderValues, seekToTime, onLoop])
 
-    const voidSnapToLoop = useCallback(() => {
-        void snapToLoop()
+    const voidSnapToLoop = useCallback((time: number) => {
+        void snapToLoop(time)
     }, [snapToLoop])
 
 
@@ -84,6 +83,7 @@ export const useYouTubePlayer = (stateDeps: LooperDependencies) => {
 
     const onStateChange = (e: YouTubeEvent<number>) => {
         const playerState: number = e.data;
+        handleResize()
 
         const poll = () => {
             void updateTime();
@@ -105,22 +105,27 @@ export const useYouTubePlayer = (stateDeps: LooperDependencies) => {
     // using setInterval rather than requestAnimationFrame
 
     // const onStateChange = (e: YouTubeEvent<number>) => {
-    //   const playerState: number = e.data;
-    //   if (playerState === 1) {
-    //     pollingRef.current = setInterval(() => {
-    //       void updateTime()
-    //     }, 10);
-    //   } else {
-    //     if (pollingRef.current) {
-    //       clearInterval(pollingRef.current)
+    //     const playerState: number = e.data;
+    //     if (playerState === 1) {
+    //         pollingRef.current = setInterval(() => {
+    //             void updateTime()
+    //         }, 10);
+    //     } else {
+    //         if (pollingRef.current) {
+    //             clearInterval(pollingRef.current)
+    //         }
     //     }
-    //   }
     // };
 
+    // const uiTimeStateUpdate = throttle((time: number) => {
+    //     setCurrentTime(time)
+    //     console.log(time)
+    // }, 1000)
+
     const updateTime = async () => {
-        console.log('man is updating')
         if (!playerRef.current) return
-        const time = await playerRef.current.getCurrentTime();
+        const time: number = await playerRef.current.getCurrentTime();
+        voidSnapToLoop(time)
         setCurrentTime(time)
     }
 
@@ -132,7 +137,6 @@ export const useYouTubePlayer = (stateDeps: LooperDependencies) => {
     }
     const setSize = async (width: number, height: number) => {
         if (!playerRef.current) return
-        console.log({ width, height })
         await playerRef.current.setSize(width, height)
     }
     const initialSizes = useMemo(() => {

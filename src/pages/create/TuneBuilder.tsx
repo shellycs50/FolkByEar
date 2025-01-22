@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { extractVideoId, fmtMSS } from "packages/looper/helpers";
 import YouTube from 'react-youtube'
 import ReactSlider from "react-slider";
@@ -15,10 +15,9 @@ import clsx from "clsx";
 export default function CreateTune() {
 
     const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
-    const { voidSnapToLoop, ...yt } = useYouTubePlayer({
+    const yt = useYouTubePlayer({
         sliderValues,
         setTrackMax,
-        currentTime,
         setCurrentTime,
         setDuration,
         setSpeed
@@ -99,9 +98,7 @@ export default function CreateTune() {
     }, [builder, duration, phrases])
 
 
-    useEffect(() => {
-        voidSnapToLoop()
-    }, [currentTime, voidSnapToLoop])
+
 
     return (
         <>
@@ -147,7 +144,7 @@ export default function CreateTune() {
                                         onAfterChange={(newSliderValues) => {
                                             updatePhrases(newSliderValues)
                                             setSliderValues(newSliderValues)
-                                            voidSnapToLoop()
+                                            // voidSnapToLoop()
                                         }}
                                         className="horizontal-slider w-full"
                                         thumbClassName="bg-white p-1 cursor-pointer relative h-3"
