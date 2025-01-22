@@ -9,7 +9,7 @@ interface LooperDependencies {
     setCurrentTime: (time: number) => void;
     setDuration: (duration: number) => void;
     setSpeed: (speed: number) => void;
-    onLoop?: () => void; //optional callback when player loops back
+    onLoop?: () => void;
 }
 
 
@@ -20,13 +20,13 @@ export const useYouTubePlayer = (stateDeps: LooperDependencies) => {
         setCurrentTime,
         setDuration,
         setSpeed,
-        onLoop
+        onLoop,
+
     } = stateDeps
     // [start, end] : times for loop
     // setTrackMax, setDuration : optional setter for UI and duration (maybe dont need to be separate)
     // [currentTime, setCurrentTime] : state representing current playback time 
     // setSpeed (passing allows reset of speed on video change)
-
     const playerRef = useRef<YouTubePlayer | null>(null);
     const pollingRef = useRef<number | null>(null)
     // const pollingRef = useRef<NodeJS.Timeout | null>(null)
@@ -43,13 +43,17 @@ export const useYouTubePlayer = (stateDeps: LooperDependencies) => {
             if (time < sliderValues[0]!) {
                 await seekToTime(sliderValues[0]!)
             } else if (time > (sliderValues[1] ?? 0)) {
-                if (onLoop) onLoop()
+                if (onLoop) {
+                    voidPlayPause()
+                    setTimeout(voidPlayPause, 1000)
+                    onLoop()
+                }
                 await seekToTime(sliderValues[0]!)
             }
         } catch (err) {
             console.error(err)
         }
-    }, [sliderValues, seekToTime, onLoop])
+    }, [sliderValues, seekToTime])
 
     const voidSnapToLoop = useCallback((time: number) => {
         void snapToLoop(time)
@@ -126,7 +130,7 @@ export const useYouTubePlayer = (stateDeps: LooperDependencies) => {
         if (!playerRef.current) return
         const time: number = await playerRef.current.getCurrentTime();
         voidSnapToLoop(time)
-        setCurrentTime(time)
+        // setCurrentTime(time)
     }
 
     const updateDuration = async () => {

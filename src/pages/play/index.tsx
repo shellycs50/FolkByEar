@@ -3,30 +3,12 @@ import { useYouTubePlayer } from "packages/looper/useYoutubePlayer"
 import React, { useCallback } from "react"
 import PlayPauseIcon from "@heroicons/react/16/solid/PlayPauseIcon"
 import { usePlayerStore } from "packages/player/store"
+import PlayerTextArea from "packages/player/components/PlayerTextArea"
+import debounce from "lodash.debounce"
 export default function Play() {
-    const [data] = React.useState({
-        "selectedPhraseIdx": 0,
-        "videoId": "Ct-oGOAQAzk",
-        "phrases": [
-            {
-                "idx": 0,
-                "startTime": 187.1,
-                "endTime": 195.5,
-                "repeatCount": 3,
-                "speed": 0.7
-            },
-            {
-                "idx": 1,
-                "startTime": 203.75,
-                "endTime": 212.32,
-                "repeatCount": 3,
-                "speed": 1
-            }
-        ],
-        "restTime": 1
-    })
-    const pp = usePlayerStore() //pp = phrasePlayer
 
+    const pp = usePlayerStore() //pp = phrasePlayer
+    const data = pp.data
     const {
         sliderValues,
         // currentTime,
@@ -57,26 +39,49 @@ export default function Play() {
     // when repeatTracker reaches 0, move to next phrase.
     // modulo length so we loop back to first phrase at the end
     // loop through phrases 
-    const onLoop = useCallback(() => {
-        console.log("looping")
-        if (pp.currentPhraseRepeatCount === 1) {
-            if (data.phrases[pp.currentPhraseIdx + 1]) {
-                pp.setSliderValues([data.phrases[pp.currentPhraseIdx + 1]?.startTime ?? 0, data.phrases[pp.currentPhraseIdx + 1]?.endTime ?? 5])
-                pp.setCurrentPhraseRepeatCount(data.phrases[pp.currentPhraseIdx + 1]?.repeatCount ?? 3)
-                pp.setCurrentPhraseIdx((pp.currentPhraseIdx + 1))
 
-            } else {
-                pp.setCurrentPhraseIdx(0)
-                pp.setSliderValues([data.phrases[0]?.startTime ?? 0, data.phrases[0]?.endTime ?? 5])
-                pp.setCurrentPhraseRepeatCount(data.phrases[0]?.repeatCount ?? 3)
-            }
+    // const onLoopCore = () => {
+    //     if (pp.currentPhraseRepeatCount !== null && pp.currentPhraseRepeatCount <= 1) {
+    //         console.log('next phrase')
+    //         if (data.phrases[pp.currentPhraseIdx + 1]) {
+    //             pp.setSliderValues([data.phrases[pp.currentPhraseIdx + 1]?.startTime ?? 0, data.phrases[pp.currentPhraseIdx + 1]?.endTime ?? 5])
+    //             pp.setCurrentPhraseRepeatCount(data.phrases[pp.currentPhraseIdx + 1]?.repeatCount ?? 3)
+    //             pp.setCurrentPhraseIdx((pp.currentPhraseIdx + 1))
 
+    //         } else {
+    //             pp.setCurrentPhraseIdx(0)
+    //             pp.setSliderValues([data.phrases[0]?.startTime ?? 0, data.phrases[0]?.endTime ?? 5])
+    //             pp.setCurrentPhraseRepeatCount(data.phrases[0]?.repeatCount ?? 3)
+    //         }
+
+    //     } else {
+    //         if (pp.currentPhraseRepeatCount) {
+    //             console.log(pp.currentPhraseRepeatCount - 1)
+    //             pp.decrementRepeatCount()
+    //         }
+    //     }
+    // }
+
+    const onLoopCore = () => {
+        const pp = usePlayerStore.getState()
+        if (pp.currentPhraseRepeatCount && pp.currentPhraseRepeatCount >= 1) {
+            console.log(pp.currentPhraseRepeatCount)
+            pp.decrementRepeatCount()
+            return
         }
-        if (pp.currentPhraseRepeatCount) {
-            pp.setCurrentPhraseRepeatCount(pp.currentPhraseRepeatCount - 1)
-        }
-    }, [pp, data.phrases])
+        if (data.phrases[pp.currentPhraseIdx + 1]) {
+            pp.setSliderValues([data.phrases[pp.currentPhraseIdx + 1]?.startTime ?? 0, data.phrases[pp.currentPhraseIdx + 1]?.endTime ?? 5])
+            pp.setCurrentPhraseRepeatCount(data.phrases[pp.currentPhraseIdx + 1]?.repeatCount ?? 3)
+            pp.setCurrentPhraseIdx((pp.currentPhraseIdx + 1))
 
+        } else {
+            pp.setCurrentPhraseIdx(0)
+            pp.setSliderValues([data.phrases[0]?.startTime ?? 0, data.phrases[0]?.endTime ?? 5])
+            pp.setCurrentPhraseRepeatCount(data.phrases[0]?.repeatCount ?? 3)
+        }
+    }
+
+    const onLoop = debounce(onLoopCore, 500)
 
     const yt = useYouTubePlayer({
         sliderValues,
@@ -85,12 +90,13 @@ export default function Play() {
         setSpeed,
         onLoop
     })
+
     const handlePlayPauseClick = () => {
         if (!pp.hasStarted) {
-            pp.setSliderValues([data.phrases[pp.currentPhraseIdx]?.startTime ?? 0, data.phrases[pp.currentPhraseIdx]?.endTime ?? 5])
-            pp.setSpeed(data.phrases[pp.currentPhraseIdx]?.speed ?? 1)
-            yt.voidChangeSpeed(data.phrases[pp.currentPhraseIdx]?.speed ?? 1)
-            pp.setCurrentPhraseRepeatCount(data.phrases[pp.currentPhraseIdx]?.repeatCount ?? 3)
+            pp.setSliderValues([data.phrases[pp.currentPhraseIdx]?.startTime ?? 666, data.phrases[pp.currentPhraseIdx]?.endTime ?? 666])
+            pp.setSpeed(data.phrases[pp.currentPhraseIdx]?.speed ?? 666)
+            yt.voidChangeSpeed(data.phrases[pp.currentPhraseIdx]?.speed ?? 666)
+            pp.setCurrentPhraseRepeatCount(data.phrases[pp.currentPhraseIdx]?.repeatCount ?? 666)
             pp.setHasStarted(true)
         }
         yt.voidPlayPause()
@@ -108,10 +114,15 @@ export default function Play() {
     })
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen gap-5">
-            <pre className="fixed left-0 text-white">{JSON.stringify(pp, null, 2)}</pre>
-            <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={data.videoId} opts={playerOpts} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
-            <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={handlePlayPauseClick} />
+        <div className="flex flex-col items-center justify-center gap-5 min-h-screen">
+
+            <PlayerTextArea />
+            <div className="relative">
+                <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={data.videoId} opts={playerOpts} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
+                <div className="absolute top-0 left-0 w-full h-full z-10 cursor-not-allowed"></div>
+            </div>
+            <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" onClick={handlePlayPauseClick} />
+            <pre className="fixed left-2 top-1 text-white text-xs">{JSON.stringify(pp, null, 2)}</pre>
         </div>
     )
 }

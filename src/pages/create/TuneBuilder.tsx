@@ -12,6 +12,7 @@ import { useTuneBuilderStore } from "packages/builder/store";
 import RepeatDropDown from "packages/builder/components/RepeatDropDown";
 import { PhraseVisualizer } from "packages/builder/components/PhraseVisualizer";
 import clsx from "clsx";
+import Link from "next/link";
 export default function CreateTune() {
 
     const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
@@ -104,6 +105,10 @@ export default function CreateTune() {
         <>
             {!builder.videoId ? (
                 <div className="h-screen flex justify-center items-center bg-slate-700">
+                    <div className="fixed top-2 right-2">
+                        <Link href="/play"
+                            className="bg-slate-900 text-white p-3 rounded-2xl">Go to Player</Link>
+                    </div>
                     <div className="bg-purple-400 border-slate-900 border-2 p-5 rounded-lg w-11/12 sm:w-1/2 md:w-1/2 flex flex-col items-center">
                         <label htmlFor="link" className="block text-sm/6 font-medium text-gray-900 ">
                             First Enter a Youtube Link
@@ -127,12 +132,13 @@ export default function CreateTune() {
                 </div>
             ) : (
                 <div className="bg-slate-700 flex flex-col justify-center pt-0 pb-0 min-h-screen">
+                    <div className="fixed top-2 right-2">
+                        <Link href="/play"
+                            className="bg-slate-900 text-white p-3 rounded-2xl">Go to Player</Link>
+                    </div>
+                    <textarea className="h-1/2 text-white text-xs bg-slate-800 p-2 rounded-lg overflow-auto fixed" value={JSON.stringify(builder, null, 2)}>
 
-                    <pre className="text-white text-xs bg-slate-800 p-2 rounded-lg overflow-auto fixed">
-                        {JSON.stringify(builder, null, 2)}
-                        {JSON.stringify({ sliderValues }, null, 2)}
-                        {currentTime}
-                    </pre>
+                    </textarea>
                     <div className="flex flex-col gap-5 items-center justify-center pt-0 m-0 w-full">
                         <div className="w-full flex flex-col items-center gap-5">
                             <PhraseVisualizer />
