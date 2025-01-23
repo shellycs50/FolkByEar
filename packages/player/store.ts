@@ -14,7 +14,7 @@ type Data = {
   phrases: Phrase[]; // Must be an array of phrases (at least one entry)
 };
 
-interface PlayerState {
+export interface PlayerState {
   sliderValues: number[];
   setSliderValues: (values: number[]) => void;
   currentTime: number;

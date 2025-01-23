@@ -16,13 +16,7 @@ import Link from "next/link";
 export default function CreateTune() {
 
     const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
-    const yt = useYouTubePlayer({
-        sliderValues,
-        setTrackMax,
-        setCurrentTime,
-        setDuration,
-        setSpeed
-    })
+    const yt = useYouTubePlayer('creator', null)
 
     const builder = useTuneBuilderStore()
     const { phrases } = builder
@@ -100,7 +94,7 @@ export default function CreateTune() {
 
 
 
-
+    // loop will often overun its bounds
     return (
         <>
             {!builder.videoId ? (
@@ -136,9 +130,14 @@ export default function CreateTune() {
                         <Link href="/play"
                             className="bg-slate-900 text-white p-3 rounded-2xl">Go to Player</Link>
                     </div>
-                    <textarea className="h-1/2 text-white text-xs bg-slate-800 p-2 rounded-lg overflow-auto fixed" value={JSON.stringify(builder, null, 2)}>
+                    <div className="flex flex-col gap-5 fixed h-screen">
 
-                    </textarea>
+                        <p>{sliderValues[0]}</p>
+                        <p>{sliderValues[1]}</p>
+                        <textarea className="text-white text-xs bg-slate-800 p-2 rounded-lg h-1/3" value={JSON.stringify(builder, null, 2)}>
+                        </textarea>
+                    </div>
+
                     <div className="flex flex-col gap-5 items-center justify-center pt-0 m-0 w-full">
                         <div className="w-full flex flex-col items-center gap-5">
                             <PhraseVisualizer />
@@ -194,9 +193,7 @@ export default function CreateTune() {
                                             setIsZoomed(true)
                                             zoomTrack(sliderValues[0]!, sliderValues[1]!)
                                         }} />}
-
                                 </div>
-
                             </div>
                         </div>
                     </div>

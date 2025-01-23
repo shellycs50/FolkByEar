@@ -10,13 +10,7 @@ export default function Looper() {
 
     const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
 
-    const yt = useYouTubePlayer({
-        sliderValues,
-        setTrackMax,
-        setCurrentTime,
-        setDuration,
-        setSpeed
-    })
+    const yt = useYouTubePlayer('creator', null)
 
     const playerOpts = React.useState({
         height: yt.initialSizes[1],

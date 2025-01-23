@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface StoreState {
+export interface LoopState {
   sliderValues: number[];
   setSliderValues: (values: number[]) => void;
   currentTime: number;
@@ -21,7 +21,7 @@ interface StoreState {
   setIsZoomed: (zoomed: boolean) => void;
 }
 
-export const useLooperStore = create<StoreState>((set) => ({
+export const useLooperStore = create<LoopState>((set) => ({
   sliderValues: [26.67, 29.39],
   setSliderValues: (values) => set({ sliderValues: values }),
   currentTime: 0,

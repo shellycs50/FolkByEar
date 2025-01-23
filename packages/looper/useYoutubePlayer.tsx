@@ -1,32 +1,39 @@
 import { useRef, useCallback, useMemo } from "react";
 import { type YouTubeEvent, type YouTubeProps } from "react-youtube";
 import type { YouTubePlayer } from 'youtube-player/dist/types'
-import type PlayerStates from "youtube-player/dist/constants/PlayerStates";
-
-interface LooperDependencies {
-    sliderValues: number[]
-    setTrackMax?: (value: number) => void;
-    setCurrentTime: (time: number) => void;
-    setDuration: (duration: number) => void;
-    setSpeed: (speed: number) => void;
-    onLoop?: () => void;
-}
+import type PlayerStates from "youtube-player/dist/constants/PlayerStates"
+import { type PlayerState, usePlayerStore } from "packages/player/store";
+import type { LoopState } from "./store";
+import { useLooperStore } from "./store";
+type UserIntent = 'player' | 'creator';
+type LoopCallback = (() => void) | null;
 
 
-export const useYouTubePlayer = (stateDeps: LooperDependencies) => {
-    const {
-        sliderValues,
-        setTrackMax,
-        setCurrentTime,
-        setDuration,
-        setSpeed,
-        onLoop,
-
-    } = stateDeps
-    // [start, end] : times for loop
-    // setTrackMax, setDuration : optional setter for UI and duration (maybe dont need to be separate)
-    // [currentTime, setCurrentTime] : state representing current playback time 
-    // setSpeed (passing allows reset of speed on video change)
+export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
+    const pp = usePlayerStore()
+    const looper = useLooperStore()
+    let setCurrentTime: (time: number) => void
+    let setTrackMax: (max: number) => void | undefined
+    let setDuration: (duration: number) => void
+    let setSpeed: (speed: number) => void
+    let getLatestState: (() => PlayerState) | (() => LoopState) | undefined
+    if (intent === 'player') {
+        ({
+            setCurrentTime,
+            setDuration,
+            setSpeed,
+        } = pp)
+        getLatestState = usePlayerStore.getState
+    }
+    else if (intent === 'creator') {
+        ({
+            setCurrentTime,
+            setDuration,
+            setSpeed,
+            setTrackMax,
+        } = looper)
+        getLatestState = useLooperStore.getState
+    }
     const playerRef = useRef<YouTubePlayer | null>(null);
     const pollingRef = useRef<number | null>(null)
     // const pollingRef = useRef<NodeJS.Timeout | null>(null)
@@ -37,7 +44,8 @@ export const useYouTubePlayer = (stateDeps: LooperDependencies) => {
         }
     }, []);
 
-    const snapToLoop = useCallback(async (time: number) => {
+    const snapToLoop = async (time: number) => {
+        const { sliderValues } = getLatestState!()
         if (!sliderValues || sliderValues[0] === 0 && sliderValues[1] === 0) return
         try {
             if (time < sliderValues[0]!) {
@@ -53,11 +61,10 @@ export const useYouTubePlayer = (stateDeps: LooperDependencies) => {
         } catch (err) {
             console.error(err)
         }
-    }, [sliderValues, seekToTime])
-
-    const voidSnapToLoop = useCallback((time: number) => {
+    }
+    const voidSnapToLoop = (time: number) => {
         void snapToLoop(time)
-    }, [snapToLoop])
+    }
 
 
     const changeSpeed = useCallback(async (speed: number) => {
@@ -130,7 +137,7 @@ export const useYouTubePlayer = (stateDeps: LooperDependencies) => {
         if (!playerRef.current) return
         const time: number = await playerRef.current.getCurrentTime();
         voidSnapToLoop(time)
-        // setCurrentTime(time)
+        setCurrentTime(time)
     }
 
     const updateDuration = async () => {
