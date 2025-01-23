@@ -22,7 +22,7 @@ export interface LoopState {
 }
 
 export const useLooperStore = create<LoopState>((set) => ({
-  sliderValues: [26.67, 29.39],
+  sliderValues: [0, 5],
   setSliderValues: (values) => set({ sliderValues: values }),
   currentTime: 0,
   setCurrentTime: (time) => set({ currentTime: time }),

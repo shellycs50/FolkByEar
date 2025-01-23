@@ -27,6 +27,7 @@ export default function PlayerTextArea({ }) {
                 setError(error.errors.map(err => err.message).join('\n'))
             } else {
                 setError('Invalid JSON')
+                console.error(error)
             }
             setTimeout(() => setError(null), 5000)
         }

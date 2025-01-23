@@ -6,7 +6,6 @@ type Phrase = {
 };
 
 type Data = {
-  selectedPhraseIdx: number;
   videoId: string;
   phrases: Phrase[];
 };
@@ -45,38 +44,27 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   hasStarted: false,
   setHasStarted: (hasStarted) => set({ hasStarted: hasStarted }),
   data: {
-    selectedPhraseIdx: 0,
-    videoId: "aMphDvniH7w",
+    videoId: "Xk8zy9kpVc0",
     phrases: [
       {
         idx: 0,
-        startTime: 0,
-        endTime: 3.58,
+        startTime: 36.34,
+        endTime: 40.69,
       },
       {
         idx: 1,
-        startTime: 3.605,
-        endTime: 5.505,
+        startTime: 40.69,
+        endTime: 45.55,
       },
       {
         idx: 2,
-        startTime: 4.751,
-        endTime: 7.316,
+        startTime: 44.84,
+        endTime: 49.42,
       },
       {
         idx: 3,
-        startTime: 21.035,
-        endTime: 24.38,
-      },
-      {
-        idx: 4,
-        startTime: 24.38,
-        endTime: 27.825,
-      },
-      {
-        idx: 5,
-        startTime: 27.825,
-        endTime: 32.825,
+        startTime: 49.42,
+        endTime: 53.89,
       },
     ],
   },
