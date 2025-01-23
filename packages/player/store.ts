@@ -27,6 +27,8 @@ export interface PlayerState {
   setCurrentPhraseIdx: (idx: number) => void;
   data: Data;
   setData: (data: Data) => void;
+  restTime: number;
+  setRestTime: (restTime: number) => void;
 }
 
 export const usePlayerStore = create<PlayerState>((set) => ({
@@ -79,4 +81,6 @@ export const usePlayerStore = create<PlayerState>((set) => ({
     ],
   },
   setData: (data: Data) => set({ data: data, hasStarted: false }),
+  restTime: 0,
+  setRestTime: (restTime) => set({ restTime: restTime }),
 }));
