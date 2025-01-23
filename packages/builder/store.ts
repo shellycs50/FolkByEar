@@ -30,7 +30,7 @@ export const useTuneBuilderStore = create<StoreState>((set) => ({
   setSelectedPhrase: (idx) => set({ selectedPhraseIdx: idx }),
   videoId: null,
   setVideoId: (id) => set({ videoId: id }),
-  phrases: [],
+  phrases: [{ idx: 0, startTime: 0, endTime: 5 }],
   setPhrases: (phrases) => set({ phrases: phrases }),
   createPhrase: () =>
     set((state) => {

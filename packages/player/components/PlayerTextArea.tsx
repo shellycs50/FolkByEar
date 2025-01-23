@@ -21,12 +21,13 @@ export default function PlayerTextArea({ }) {
         const value = e.target.value
         try {
             const data = dataSchema.parse(JSON.parse(value))
-            pp.setData({ selectedPhraseIdx: 0, ...data })
+            pp.setData(data)
         } catch (error) {
             if (error instanceof ZodError) {
                 setError(error.errors.map(err => err.message).join('\n'))
             } else {
                 setError('Invalid JSON')
+                console.error(error)
             }
             setTimeout(() => setError(null), 5000)
         }
