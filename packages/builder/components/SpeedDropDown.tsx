@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { useTuneBuilderStore } from 'packages/builder/store'
 export default function SpeedDropDown({ speed, setSpeed, voidChangeSpeed }: { speed: number, setSpeed: (speed: number) => void, voidChangeSpeed: (speed: number) => void }) {
-  const builder = useTuneBuilderStore()
+  // const builder = useTuneBuilderStore()
   return (
     <div className='relative self-endrt'>
       <label htmlFor="speed" className="block text-sm/6 text-gray-200 text-center absolute bottom-9">
@@ -15,7 +15,7 @@ export default function SpeedDropDown({ speed, setSpeed, voidChangeSpeed }: { sp
           value={speed}
           onChange={(e) => {
             setSpeed(parseFloat(e.target.value))
-            builder.setCurrentSpeed(builder.selectedPhraseIdx, parseFloat(e.target.value))
+            // builder.setCurrentSpeed(builder.selectedPhraseIdx, parseFloat(e.target.value))
             voidChangeSpeed(parseFloat(e.target.value))
           }
           }

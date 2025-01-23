@@ -4,8 +4,6 @@ export interface phrase {
   idx: number;
   startTime: number;
   endTime: number;
-  repeatCount: number;
-  speed: number;
 }
 
 // const defaultPhrase = {
@@ -21,14 +19,10 @@ interface StoreState {
   setVideoId: (id: string) => void;
   phrases: phrase[];
   setPhrases: (phrases: phrase[]) => void;
-  createPhrase: (speed: number, repeatCount: number) => void;
+  createPhrase: () => void;
   deletePhrase: (idx: number) => void;
-  restTime: number;
-  setRestTime: (time: number) => void;
   selectedPhraseIdx: number;
   setSelectedPhrase: (idx: number) => void;
-  setRepeatCount: (idx: number, count: number) => void;
-  setCurrentSpeed: (idx: number, speed: number) => void;
 }
 
 export const useTuneBuilderStore = create<StoreState>((set) => ({
@@ -38,7 +32,7 @@ export const useTuneBuilderStore = create<StoreState>((set) => ({
   setVideoId: (id) => set({ videoId: id }),
   phrases: [],
   setPhrases: (phrases) => set({ phrases: phrases }),
-  createPhrase: (speed, repeatCount) =>
+  createPhrase: () =>
     set((state) => {
       const start = state.phrases[state.phrases.length - 1]?.endTime ?? 0;
       return {
@@ -48,8 +42,6 @@ export const useTuneBuilderStore = create<StoreState>((set) => ({
             idx: state.phrases.length,
             startTime: start,
             endTime: start + 5,
-            repeatCount: repeatCount,
-            speed: speed,
           },
         ],
         selectedPhraseIdx: state.phrases.length ?? 0,
@@ -59,22 +51,4 @@ export const useTuneBuilderStore = create<StoreState>((set) => ({
     set((state) => ({
       phrases: state.phrases.filter((phrase) => phrase.idx !== idx),
     })),
-  restTime: 1,
-  setRestTime: (time) => set({ restTime: time }),
-  setRepeatCount: (idx, count) => {
-    set((state) => {
-      const newPhrases = [...state.phrases];
-      if (!newPhrases[idx]) return state;
-      newPhrases[idx].repeatCount = count;
-      return { phrases: newPhrases };
-    });
-  },
-  setCurrentSpeed: (idx: number, speed: number) => {
-    set((state) => {
-      const newPhrases = [...state.phrases];
-      if (!newPhrases[idx]) return state;
-      newPhrases[idx].speed = speed;
-      return { phrases: newPhrases };
-    });
-  },
 }));
