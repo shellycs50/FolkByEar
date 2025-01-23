@@ -5,6 +5,7 @@ import type PlayerStates from "youtube-player/dist/constants/PlayerStates"
 import { type PlayerState, usePlayerStore } from "packages/player/store";
 import type { LoopState } from "./store";
 import { useLooperStore } from "./store";
+import { get } from "http";
 type UserIntent = 'player' | 'creator';
 type LoopCallback = (() => void) | null;
 
@@ -17,6 +18,7 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
     let setDuration: (duration: number) => void
     let setSpeed: (speed: number) => void
     let getLatestState: (() => PlayerState) | (() => LoopState) | undefined
+    let getRestTime: (() => PlayerState) | undefined
     // this injection needs to be done better but for now it works
     if (intent === 'player') {
         ({
@@ -25,6 +27,7 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
             setSpeed,
         } = pp)
         getLatestState = usePlayerStore.getState
+        getRestTime = usePlayerStore.getState
     }
     else if (intent === 'creator') {
         ({
@@ -47,14 +50,16 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
 
     const snapToLoop = async (time: number) => {
         const { sliderValues } = getLatestState!()
+        let restTime = getRestTime?.().restTime
+        if (restTime) restTime *= 1000
         if (!sliderValues || sliderValues[0] === 0 && sliderValues[1] === 0) return
         try {
             if (time < sliderValues[0]!) {
                 await seekToTime(sliderValues[0]!)
             } else if (time > (sliderValues[1] ?? 0)) {
-                if (intent === 'player') {
+                if (intent === 'player' && restTime) {
                     voidPlayPause()
-                    setTimeout(voidPlayPause, 1000)
+                    setTimeout(voidPlayPause, restTime)
                 }
                 if (onLoop) {
                     onLoop()

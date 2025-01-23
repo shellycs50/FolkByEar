@@ -8,6 +8,7 @@ import { usePlayerStore } from "packages/player/store"
 import PlayerTextArea from "packages/player/components/PlayerTextArea"
 import { PlayerPhraseVisualizer } from "packages/player/components/PlayerPhraseVisualizer"
 import SpeedDropDown from "packages/builder/components/SpeedDropDown"
+import RestTimeDropDown from "packages/player/components/RestTimeDropDown"
 export default function Play() {
 
     const pp = usePlayerStore() //pp = phrasePlayer
@@ -79,18 +80,16 @@ export default function Play() {
                 <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={pp.data.videoId} opts={playerOpts} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
                 <div className="absolute top-0 left-0 w-full h-full z-10 cursor-not-allowed"></div>
             </div>
-            <div className="grid grid-cols-3 justify-items-between w-1/2">
-                <div className="w-full">
-                    <div className="w-1/4">
-                        <SpeedDropDown speed={pp.speed} setSpeed={pp.setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
-                    </div>
-                </div>
+            <div className="grid grid-cols-3 justify-items-between  w-1/2 bg-slate-800 m-0 p-3 rounded-xl">
+                <SpeedDropDown speed={pp.speed} setSpeed={pp.setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
+
                 <div className="flex flex-row gap-2 w-full justify-center">
                     <BackwardIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" onClick={handleBackwardClick} />
                     <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" onClick={handlePlayPauseClick} />
                     <ForwardIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" onClick={handleNextClick} />
                 </div>
-                <div className=""></div>
+
+                <RestTimeDropDown restTime={pp.restTime} setRestTime={pp.setRestTime} />
             </div>
             <div className="fixed left-2 top-1 flex flex-col gap-2">
                 <h2>Current Phrase</h2>

@@ -10,22 +10,18 @@ export default function PlayerTextArea({ }) {
         idx: z.number().int().nonnegative(), // Must be a non-negative integer
         startTime: z.number().nonnegative(), // Must be a non-negative number
         endTime: z.number().nonnegative(), // Must be a non-negative number
-        repeatCount: z.number().int().positive(), // Must be a positive integer
-        speed: z.number().positive(), // Must be a positive number
     });
 
     const dataSchema = z.object({
-        selectedPhraseIdx: z.number().int().nonnegative(), // Must be a non-negative integer
         videoId: z.string().min(1), // Must be a non-empty string
         phrases: z.array(phraseSchema).min(1), // Must be an array of phrases with at least one entry
-        restTime: z.number().nonnegative(), // Must be a non-negative number
     });
 
     const handleChangeCore = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = e.target.value
         try {
             const data = dataSchema.parse(JSON.parse(value))
-            pp.setData(data)
+            pp.setData({ selectedPhraseIdx: 0, ...data })
         } catch (error) {
             if (error instanceof ZodError) {
                 setError(error.errors.map(err => err.message).join('\n'))
