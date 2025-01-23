@@ -15,8 +15,6 @@ export const PlayerPhraseVisualizer = () => {
                     onClick={() => {
                         pp.setCurrentPhraseIdx(phrase.idx)
                         pp.setSliderValues([phrase.startTime, phrase.endTime])
-                        pp.setSpeed(phrase.speed)
-                        pp.setCurrentPhraseRepeatCount(phrase.repeatCount)
                         void yt.updateTime()
                     }}>
                     {phrase.idx}

@@ -17,6 +17,7 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
     let setDuration: (duration: number) => void
     let setSpeed: (speed: number) => void
     let getLatestState: (() => PlayerState) | (() => LoopState) | undefined
+    // this injection needs to be done better but for now it works
     if (intent === 'player') {
         ({
             setCurrentTime,
@@ -51,9 +52,11 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
             if (time < sliderValues[0]!) {
                 await seekToTime(sliderValues[0]!)
             } else if (time > (sliderValues[1] ?? 0)) {
-                if (onLoop) {
+                if (intent === 'player') {
                     voidPlayPause()
                     setTimeout(voidPlayPause, 1000)
+                }
+                if (onLoop) {
                     onLoop()
                 }
                 await seekToTime(sliderValues[0]!)

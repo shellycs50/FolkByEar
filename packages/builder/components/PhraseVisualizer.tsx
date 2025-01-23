@@ -2,7 +2,7 @@ import { useTuneBuilderStore } from "../store"
 import { useLooperStore } from "packages/looper/store"
 import clsx from 'clsx'
 export const PhraseVisualizer = () => {
-    const { setSliderValues, setSpeed } = useLooperStore()
+    const { setSliderValues } = useLooperStore()
     const builder = useTuneBuilderStore()
     return (
         <div className="flex">
@@ -15,7 +15,6 @@ export const PhraseVisualizer = () => {
                     onClick={() => {
                         builder.setSelectedPhrase(phrase.idx)
                         setSliderValues([phrase.startTime, phrase.endTime])
-                        setSpeed(phrase.speed)
                     }}>
                     {phrase.idx}
                 </div>))}

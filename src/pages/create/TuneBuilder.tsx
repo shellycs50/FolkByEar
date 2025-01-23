@@ -9,7 +9,7 @@ import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, PlayPauseIcon } from
 import { useLooperStore } from "packages/looper/store";
 import { useYouTubePlayer } from "packages/looper/useYoutubePlayer";
 import { useTuneBuilderStore } from "packages/builder/store";
-import RepeatDropDown from "packages/builder/components/RepeatDropDown";
+// import RepeatDropDown from "packages/builder/components/RepeatDropDown";
 import { PhraseVisualizer } from "packages/builder/components/PhraseVisualizer";
 import clsx from "clsx";
 import Link from "next/link";
@@ -175,12 +175,11 @@ export default function CreateTune() {
                                         { 'border-4 border-green-500': builder.phrases.length === 0 }
                                     )} onClick={() => {
                                         const start = phrases[phrases.length - 1]?.endTime ?? 0
-                                        const repeatCount = phrases[phrases.length - 1]?.repeatCount ?? 3
                                         setSliderValues([start, start + 5])
-                                        createPhrase(speed, repeatCount)
+                                        createPhrase()
 
                                     }}><p>Create New</p></a>
-                                    <RepeatDropDown />
+                                    {/* <RepeatDropDown /> */}
                                     <SpeedDropDown speed={speed} setSpeed={setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
                                     <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => yt.voidPlayPause()} />
                                     {isZoomed ?
