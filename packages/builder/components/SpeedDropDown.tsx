@@ -3,7 +3,7 @@ import { useTuneBuilderStore } from 'packages/builder/store'
 export default function SpeedDropDown({ speed, setSpeed, voidChangeSpeed }: { speed: number, setSpeed: (speed: number) => void, voidChangeSpeed: (speed: number) => void }) {
   // const builder = useTuneBuilderStore()
   return (
-    <div className='relative self-end w-full flex justify-start'>
+    <div className='relative self-end flex justify-start'>
       <label htmlFor="speed" className="block text-sm/6 text-gray-200 text-center absolute bottom-9">
         Speed
       </label>

@@ -169,7 +169,7 @@ export default function CreateTune() {
                                     />
                                 </div>
 
-                                <div className="flex justify-between w-full">
+                                <div className="flex justify-between w-full items-end">
                                     <a className={clsx(
                                         'bg-slate-900 text-white p-3 rounded-2xl cursor-pointer',
                                         { 'border-4 border-green-500': builder.phrases.length === 0 }
