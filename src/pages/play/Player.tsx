@@ -141,7 +141,7 @@ export default function Player() {
             <PlayerTextArea />
             <div className="relative">
                 <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={pp.data.videoId} opts={playerOpts} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
-                <div className="absolute top-0 left-0 w-full h-full z-10 cursor-not-allowed"></div>
+                <a onClick={handlePlayPauseClick} className="absolute top-0 left-0 w-full h-full z-10"></a>
             </div>
             <div className="w-1/2 bg-slate-600 p-5 pb-8 mt-3 rounded-3xl flex">
                 <ReactSlider
