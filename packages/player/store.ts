@@ -22,16 +22,30 @@ export interface PlayerState {
   hasStarted: boolean;
   setHasStarted: (hasStarted: boolean) => void;
   // player specific
-  currentPhraseIdx: number;
-  setCurrentPhraseIdx: (idx: number) => void;
+  currentPhraseIdxs: number[];
+  setCurrentPhraseIdxs: (arr: number[]) => void;
+  togglePhraseIdx: (idx: number) => void;
   data: Data;
   setData: (data: Data) => void;
   restTime: number;
   setRestTime: (restTime: number) => void;
+  showGuide: boolean;
+  setShowGuide: (val: boolean) => void;
 }
 
+const generateArray = (arr: number[]) => {
+  const [startIdx, endIdx] = [Math.min(...arr), Math.max(...arr)];
+  if (typeof startIdx === "undefined" || typeof endIdx === "undefined") return;
+  const output = [];
+  for (let i = startIdx; i <= endIdx; i++) {
+    output.push(i);
+  }
+  return output;
+};
 export const usePlayerStore = create<PlayerState>((set) => ({
-  sliderValues: [0, 0],
+  showGuide: true,
+  setShowGuide: (val) => set({ showGuide: val }),
+  sliderValues: [36.34, 40.69],
   setSliderValues: (values) => set({ sliderValues: values }),
   currentTime: 0,
   setCurrentTime: (time) => set({ currentTime: time }),
@@ -39,8 +53,36 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   setDuration: (duration) => set({ duration: duration }),
   speed: 1,
   setSpeed: (speed) => set({ speed: speed }),
-  currentPhraseIdx: 0,
-  setCurrentPhraseIdx: (idx) => set({ currentPhraseIdx: idx }),
+  currentPhraseIdxs: [0],
+  setCurrentPhraseIdxs: (arr) => set({ currentPhraseIdxs: arr }),
+  togglePhraseIdx: (idx) => {
+    set((state) => {
+      const arr = state.currentPhraseIdxs;
+
+      if (arr.includes(idx)) {
+        if (arr.length === 1) {
+          return {};
+        }
+        const filtered = arr.filter((i) => i !== idx);
+        const output = generateArray(filtered);
+        return { currentPhraseIdxs: output };
+      } else {
+        const output = generateArray([...arr, idx]);
+        if (!output?.length) return {};
+        const firstEntryIndex = output[0] ?? 0;
+        const lastEntryIndex = output[output.length - 1] ?? 0;
+        //note data is constant / immutable
+        const newSliderValues = [
+          state.data.phrases[firstEntryIndex]?.startTime ?? 0,
+          state.data.phrases[lastEntryIndex]?.endTime ?? 0,
+        ];
+        return {
+          currentPhraseIdxs: output,
+          sliderValues: newSliderValues,
+        };
+      }
+    });
+  },
   hasStarted: false,
   setHasStarted: (hasStarted) => set({ hasStarted: hasStarted }),
   data: {
@@ -69,6 +111,6 @@ export const usePlayerStore = create<PlayerState>((set) => ({
     ],
   },
   setData: (data: Data) => set({ data: data, hasStarted: false }),
-  restTime: 0,
+  restTime: 0.5,
   setRestTime: (restTime) => set({ restTime: restTime }),
 }));

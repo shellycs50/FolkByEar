@@ -130,10 +130,9 @@ export default function CreateTune() {
                         <Link href="/play"
                             className="bg-slate-900 text-white p-3 rounded-2xl">Go to Player</Link>
                     </div>
-                    <div className="flex flex-col gap-5 fixed h-screen">
+                    <div className="flex flex-col gap-5 fixed h-screen p-5">
 
-                        <p>{sliderValues[0]}</p>
-                        <p>{sliderValues[1]}</p>
+                        <p className="text-white text-center bg-slate-400">data</p>
                         <textarea className="text-white text-xs bg-slate-800 p-2 rounded-lg h-1/3" value={JSON.stringify(builder, null, 2)}>
                         </textarea>
                     </div>
@@ -141,7 +140,10 @@ export default function CreateTune() {
                     <div className="flex flex-col gap-5 items-center justify-center pt-0 m-0 w-full">
                         <div className="w-full flex flex-col items-center gap-5">
                             <PhraseVisualizer />
-                            <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
+                            <div className="relative">
+                                <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
+                                <div className="absolute top-0 left-0 w-full h-full z-10 cursor-not-allowed"></div>
+                            </div>
                             <div className="flex flex-col justify-center items-center gap-10 w-full sm:w-2/3 md:w-7/12 bg-slate-800 border-slate-900 border-2 p-8 rounded-3xl">
                                 <div className="w-full bg-slate-600 p-5 pb-8 rounded-3xl flex">
                                     <ReactSlider
