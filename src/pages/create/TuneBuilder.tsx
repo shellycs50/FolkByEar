@@ -1,5 +1,5 @@
 
-import React, { useCallback } from "react";
+import React, { use, useCallback } from "react";
 import { extractVideoId, fmtMSS } from "packages/looper/helpers";
 import YouTube from 'react-youtube'
 import ReactSlider from "react-slider";
@@ -12,20 +12,45 @@ import { useTuneBuilderStore } from "packages/builder/store";
 // import RepeatDropDown from "packages/builder/components/RepeatDropDown";
 import { PhraseVisualizer } from "packages/builder/components/PhraseVisualizer";
 import clsx from "clsx";
-import Link from "next/link";
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { motion } from "framer-motion";
 import Instructions from "packages/builder/components/Instructions";
 import { toast, ToastContainer, Bounce } from 'react-toastify'
+import { dataDecompress, getBuilderUrl, getPlayerUrl } from "packages/sharing/conversion";
+import { useRouter } from "next/router";
+import BuilderHeader from "packages/builder/components/BuilderHeader";
+import DangerDialog from "packages/misc/DangerDialog";
+import Header from "packages/header/Header";
 export default function CreateTune() {
 
     const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed, isPlaying } = useLooperStore();
     const yt = useYouTubePlayer('creator', null)
-
     const builder = useTuneBuilderStore()
+    const reset = builder.reset
     const { phrases } = builder
     const { createPhrase } = builder
 
+    const router = useRouter()
+    const removeQueryParams = async () => {
+        await router.push({
+            pathname: router.pathname,
+            query: {},
+        }, undefined, { shallow: true });
+    }
+    React.useEffect(() => {
+        const q = router.query
+        if (typeof q.data === 'string' && q.data.length > 0) {
+            const res = dataDecompress(q.data)
+            if (res !== null) {
+                builder.setPhrases(res.phrases)
+                builder.setVideoId(res.videoId)
+                setVideoId(res.videoId)
+                setSliderValues([res.phrases[0]?.startTime ?? 0, res.phrases[0]?.endTime ?? 5])
+                builder.setSelectedPhrase(0)
+                void removeQueryParams()
+            }
+        }
+    }, [])
 
     const playerOpts = React.useState({
         height: yt.initialBuilderSizes[1],
@@ -80,7 +105,7 @@ export default function CreateTune() {
         const id = extractVideoId(userUrl)
         if (id) {
             setVideoId(id)
-            builder.videoId = id
+            builder.setVideoId(id)
             setValidUrl(true)
         } else {
             setValidUrl(false)
@@ -101,9 +126,9 @@ export default function CreateTune() {
         return (top / bottom) * 100 * 0.96
     }, [currentTime, trackMin, trackMax])
 
-    const copiedToast = () => toast.success('💪 Code copied. Visit the player and paste it in!', {
+    const playToast = (message: string) => toast.success(message, {
         position: "bottom-right",
-        autoClose: 1000,
+        autoClose: 3000,
         hideProgressBar: true,
         closeOnClick: false,
         pauseOnHover: true,
@@ -113,16 +138,57 @@ export default function CreateTune() {
         transition: Bounce,
     });
 
+    const playerUrl = React.useMemo(() => {
+        if (!builder.videoId) return
+        return getPlayerUrl(builder)
+    }, [builder])
+
+    const builderUrl = React.useMemo(() => {
+        if (!builder.videoId) return
+        return getBuilderUrl(builder)
+    }, [builder])
+
+
+    // danger dialog 
+
+    const [dangerIsOpen, setDangerIsOpen] = React.useState(false)
+    const [dangerIntent, setDangerIntent] = React.useState("none")
+
+    const clearBuilder = useCallback(() => {
+        reset()
+    }, [reset])
+
+    const leaveBuilder: () => void = useCallback(() => {
+        void (async () => {
+            await router.push('/play');
+        })();
+    }, [router]);
+
+    const dangerDialogArgs = {
+        title: "Leave Builder",
+        message: "Remember to copy builder and player links before leaving.",
+        cta: "Leave",
+        open: dangerIsOpen,
+        setOpen: setDangerIsOpen,
+        intent: dangerIntent,
+        leave: leaveBuilder,
+        clear: clearBuilder
+    }
+    const warn = (intent: string) => {
+        setDangerIntent(intent)
+        setDangerIsOpen(true)
+    }
+
+    const tryToLeave = () => {
+        warn('leave')
+    }
     return (
         <>
             {!builder.videoId ? (
-                <div className="h-screen flex justify-center items-center bg-slate-700">
-                    <div className="fixed top-2 right-2">
-                        <Link href="/play"
-                            className="bg-slate-900 text-white p-3 rounded-2xl">Go to Player</Link>
-                    </div>
-                    <div className="bg-purple-400 border-slate-900 border-2 p-5 rounded-lg w-11/12 sm:w-1/2 md:w-1/2 flex flex-col items-center">
-                        <label htmlFor="link" className="block text-sm/6 font-medium text-gray-900 ">
+                <div className="flex flex-col items-center justify-start h-screen">
+                    <Header />
+                    <div className="bg-slate-900 text-white border-slate-900 border-2 p-5 rounded-lg w-11/12 sm:w-1/2 md:w-1/2 flex flex-col items-center">
+                        <label htmlFor="link" className="block text-sm/6 font-medium text-white ">
                             First Enter a Youtube Link
                         </label>
                         <div className="mt-2 w-full lg:w-2/3">
@@ -135,6 +201,7 @@ export default function CreateTune() {
                                     setUserUrl(e.target.value)
                                     debounce(handleUrlChange, 500)
                                 }}
+                                placeholder="https://www.youtube.com/watch?v=qoPdu64kG84"
                                 className={`text-center block w-full rounded-md bg-slate-200 px-3 py-1.5 font-semibold text-gray-900 outline outline-1 -outline-offset-1 outline-slate-400 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 lg:text-base ${validUrl === false && "text-red-500"}`}
                             />
                         </div>
@@ -143,13 +210,9 @@ export default function CreateTune() {
                     </div>
                 </div>
             ) : (
-                <div className="bg-slate-700 flex flex-col justify-center pt-0 pb-0 min-h-screen">
-                    <div className="fixed top-2 right-2">
-                        <Link href="/play"
-                            className="bg-slate-900 text-white p-3 rounded-2xl">Go to Player</Link>
-                    </div>
-
-                    <div className="flex flex-col gap-5 items-center justify-center pt-0 m-0 w-full">
+                <div className="bg-slate-700 flex flex-col justify-center items-center pt-0 pb-0 min-h-screen">
+                    <BuilderHeader tryToLeave={tryToLeave} />
+                    <div className="flex flex-col gap-5 items-center justify-center pt-4 m-0 w-full">
                         <div className="w-full flex flex-col items-center gap-5">
                             <PhraseVisualizer />
                             <div className="relative">
@@ -211,7 +274,7 @@ export default function CreateTune() {
                                             setSliderValues([start, start + 5])
                                             createPhrase()
 
-                                        }}><p className="select-none">Create New</p></motion.a>
+                                        }}><p className="select-none">Add Phrase</p></motion.a>
                                     {/* <RepeatDropDown /> */}
                                     <SpeedDropDown speed={speed} setSpeed={setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
                                     <motion.a
@@ -243,12 +306,36 @@ export default function CreateTune() {
                     </div>
 
                     <div className="flex flex-col gap-5 lg:gap-20 justify-start items-center px-10 py-5 pb-10">
-                        <CopyToClipboard text={JSON.stringify(builder, null, 2)}>
+                        <div className="flex flex-wrap gap-5">
+
                             <motion.button
                                 whileTap={{ scale: 0.9 }}
-                                onClick={copiedToast}
-                                className="bg-slate-900 text-white p-3 rounded-2xl select-none">Copy Player Data</motion.button>
-                        </CopyToClipboard>
+                                onClick={() => warn('clear')}
+                                className="self-start bg-slate-900 text-white p-3 rounded-2xl select-none">
+                                Start a new tune
+                            </motion.button>
+
+                            <CopyToClipboard
+                                text={playerUrl ?? ''}>
+                                <motion.button
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={() => playToast('Player link copied to clipboard 💪')}
+                                    className="bg-slate-900 text-white p-3 rounded-2xl select-none">Copy Player Link
+                                </motion.button>
+                            </CopyToClipboard>
+
+                            <CopyToClipboard
+                                text={builderUrl ?? ''}>
+                                <motion.button
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={() => playToast(' Builder link copied to clipboard 💪')}
+                                    className="bg-slate-900 text-white p-3 rounded-2xl select-none">Copy Builder Link
+                                </motion.button>
+                            </CopyToClipboard>
+
+
+                        </div>
+
                         <div className="block 2xl:fixed 2xl:left-0 2xl:top-0 ">
                             <Instructions />
                         </div>
@@ -265,8 +352,8 @@ export default function CreateTune() {
                         pauseOnHover
                         theme="light"
                         transition={Bounce}
-
                     />
+                    <DangerDialog {...dangerDialogArgs} />
                 </div>
             )
             }

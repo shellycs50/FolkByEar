@@ -1,12 +1,11 @@
 import YouTube from "react-youtube"
 import { useYouTubePlayer } from "packages/looper/useYoutubePlayer"
-import React from "react"
+import React, { useEffect } from "react"
 import PlayPauseIcon from "@heroicons/react/16/solid/PlayPauseIcon"
 import { ForwardIcon } from "@heroicons/react/16/solid"
 import { BackwardIcon } from "@heroicons/react/16/solid"
 import { ArrowPathIcon } from "@heroicons/react/16/solid"
 import { usePlayerStore } from "packages/player/store"
-import PlayerTextArea from "packages/player/components/PlayerTextArea"
 import { PlayerPhraseVisualizer } from "packages/player/components/PlayerPhraseVisualizer"
 import SpeedDropDown from "packages/builder/components/SpeedDropDown"
 import RestTimeDropDown from "packages/player/components/RestTimeDropDown"
@@ -15,9 +14,35 @@ import { fmtMSS } from "packages/looper/helpers"
 import debounce from "lodash.debounce"
 import Instructions from "packages/player/components/Instructions"
 import { motion } from "framer-motion"
-export default function Player() {
+import { useRouter } from "next/router"
+import { dataDecompress } from "packages/sharing/conversion"
+import Link from "next/link"
+import Header from "packages/header/Header"
 
+export default function Player() {
     const pp = usePlayerStore() //pp = phrasePlayer
+
+    const router = useRouter()
+
+    const removeQueryParams = async () => {
+        await router.push({
+            pathname: router.pathname,
+            query: {},
+        }, undefined, { shallow: true });
+    }
+
+    useEffect(() => {
+        const q = router.query
+        if (typeof q.data === 'string' && q.data.length > 0) {
+            const res = dataDecompress(q.data)
+            if (res !== null) {
+                pp.setData(res)
+                pp.setSliderValues([res.phrases[0]?.startTime ?? 0, res.phrases[0]?.endTime ?? 5])
+                pp.setCurrentPhraseIdxs([0])
+                void removeQueryParams()
+            }
+        }
+    }, [])
 
 
     // const onLoopCore = () => {
@@ -136,11 +161,10 @@ export default function Player() {
     }, [handleResize])
 
 
-
     return (
         <div className="flex flex-col items-center justify-center gap-5 min-h-screen pb-20">
+            <Header />
 
-            <PlayerTextArea />
             <div className="relative">
                 <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={pp.data.videoId} opts={playerOpts} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
                 <a onClick={handlePlayPauseClick} className="absolute top-0 left-0 w-full h-full z-10"></a>

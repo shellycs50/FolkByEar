@@ -20,8 +20,8 @@ export default function Instructions() {
                         </div>
                         <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
                             <dt><a className=
-                                'bg-slate-900 text-white px-2 py-3 rounded-2xl cursor-pointer text-xs'>Create new</a></dt>
-                            <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Hit create new to add a new loop
+                                'bg-slate-900 text-white px-2 py-3 rounded-2xl cursor-pointer text-xs'>Add Phrase</a></dt>
+                            <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Hit add phrase to add a new loop
                             </dd>
                         </div>
                         <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
