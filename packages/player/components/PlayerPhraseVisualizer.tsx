@@ -35,7 +35,7 @@ export const PlayerPhraseVisualizer = () => {
                             if (sliderValues) pp.setSliderValues(sliderValues)
                             void yt.updateTime()
                         }}>
-                        {phrase.idx}
+                        {phrase.idx + 1}
                     </a>))}
                 {data.phrases.length === 0 && <div className="border border-black p-2 m-2 text-white">No phrases</div>}
             </div>

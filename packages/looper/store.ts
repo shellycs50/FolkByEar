@@ -32,7 +32,7 @@ export const useLooperStore = create<LoopState>((set) => ({
   setCurrentTime: (time) => set({ currentTime: time }),
   videoId: "D6FdFNuWmVY",
   setVideoId: (id) => set({ videoId: id }),
-  userUrl: "https://www.youtube.com/watch?v=qoPdu64kG84",
+  userUrl: "",
   setUserUrl: (url) => set({ userUrl: url }),
   duration: 0,
   setDuration: (duration) => set({ duration: duration }),
