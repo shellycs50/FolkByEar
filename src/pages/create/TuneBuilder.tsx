@@ -214,10 +214,13 @@ export default function CreateTune() {
                     <BuilderHeader tryToLeave={tryToLeave} />
                     <div className="flex flex-col gap-5 items-center justify-center pt-4 m-0 w-full">
                         <div className="w-full flex flex-col items-center gap-5">
-                            <PhraseVisualizer />
+
                             <div className="relative">
                                 <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
                                 <a onClick={yt.voidPlayPause} className="absolute top-0 left-0 w-full h-full z-10"></a>
+                            </div>
+                            <div className="justify-self-center w-1/2">
+                                <PhraseVisualizer />
                             </div>
                             <div className="flex flex-col justify-center items-center gap-10 w-full sm:w-2/3 md:w-7/12 bg-slate-800 border-slate-900 border-2 p-8 rounded-3xl">
                                 <div className="w-full bg-slate-600 p-5 pb-8 rounded-3xl flex relative">

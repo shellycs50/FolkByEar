@@ -25,7 +25,7 @@ export const PlayerPhraseVisualizer = () => {
                 {data.phrases.map((phrase) => (
                     <a key={phrase.idx} className=
                         {clsx(
-                            'border border-black p-2 m-2 text-white cursor-pointer',
+                            'border border-black p-2 m-2 text-white cursor-pointer h-9 w-9 overflow-hidden text-center flex justify-center items-center',
                             { 'bg-green-300': pp.currentPhraseIdxs.includes(phrase.idx) }
                         )}
                         onClick={() => {
@@ -35,7 +35,7 @@ export const PlayerPhraseVisualizer = () => {
                             if (sliderValues) pp.setSliderValues(sliderValues)
                             void yt.updateTime()
                         }}>
-                        {phrase.idx + 1}
+                        <p>{phrase.idx + 1}</p>
                     </a>))}
                 {data.phrases.length === 0 && <div className="border border-black p-2 m-2 text-white">No phrases</div>}
             </div>
