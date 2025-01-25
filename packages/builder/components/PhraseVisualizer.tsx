@@ -16,7 +16,7 @@ export const PhraseVisualizer = () => {
                         builder.setSelectedPhrase(phrase.idx)
                         setSliderValues([phrase.startTime, phrase.endTime])
                     }}>
-                    {phrase.idx}
+                    {phrase.idx + 1}
                 </div>))}
             {builder.phrases.length === 0 && <div className="border border-black p-2 m-2 text-white">No phrases</div>}
         </div>
