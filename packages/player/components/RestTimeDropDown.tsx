@@ -7,7 +7,7 @@ export default function RestTimeDropDown({ restTime, setRestTime }: { restTime: 
                 <label htmlFor="rest-time" className="block text-sm/6 text-gray-200 text-center absolute bottom-9 lg:hidden ">
                     Rest
                 </label>
-                <label htmlFor="rest-time" className="text-sm/6 text-gray-200 text-center absolute bottom-9 hidden lg:block ">
+                <label htmlFor="rest-time" className="text-sm/6 text-custom-paleYellow text-center absolute bottom-9 hidden lg:block ">
                     Rest Time
                 </label>
                 <div className="mt-2 grid grid-cols-1">
@@ -19,7 +19,7 @@ export default function RestTimeDropDown({ restTime, setRestTime }: { restTime: 
                             setRestTime(parseFloat(e.target.value))
                         }
                         }
-                        className="select-none col-start-1 row-start-1 w-full appearance-none rounded-md bg-gray-900 py-1.5 pl-3 pr-8 text-base text-white outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        className="select-none col-start-1 row-start-1 w-full appearance-none rounded-md bg-custom-paleYellow text-custom-darkRed py-1.5 pl-3 pr-8 text-base  outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     >
                         <option value={0}>0</option>
                         <option value={0.5}>0.5</option>

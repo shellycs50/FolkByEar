@@ -6,7 +6,7 @@ export default function Header() {
     const { pathname } = useRouter()
 
     return (
-        <div className="w-1/2 flex flex-col justify-center items-center md:border-b border-white/10 md:relative shadow-2xl">
+        <div className="w-1/2 flex flex-col justify-center items-center md:border-b border-white/10 md:relative shadow-2xl ">
             <div className="hidden md:flex flex-col gap-3 items-center p-4 rounded-b-3xl">
                 <h1 className="text-md lg:text-4xl text-gray-100 font-semibold">Folk By Ear</h1>
                 <p className="hidden lg:block lg:text-sm text-gray-300">Learn tunes faaaast</p>

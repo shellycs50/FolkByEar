@@ -4,7 +4,7 @@ export default function SpeedDropDown({ speed, setSpeed, voidChangeSpeed }: { sp
   // const builder = useTuneBuilderStore()
   return (
     <div className='relative self-end flex justify-start select-none'>
-      <label htmlFor="speed" className="block text-sm/6 text-gray-200 text-center absolute bottom-9">
+      <label htmlFor="speed" className="block text-sm/6 text-custom-paleYellow text-center absolute bottom-9">
         Speed
       </label>
 
@@ -17,9 +17,9 @@ export default function SpeedDropDown({ speed, setSpeed, voidChangeSpeed }: { sp
             setSpeed(parseFloat(e.target.value))
             // builder.setCurrentSpeed(builder.selectedPhraseIdx, parseFloat(e.target.value))
             voidChangeSpeed(parseFloat(e.target.value))
-          }
-          }
-          className="select-none col-start-1 row-start-1 w-full appearance-none rounded-md bg-gray-900 py-1.5 pl-3 pr-8 text-base text-white outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+          }}
+
+          className="select-none col-start-1 row-start-1 w-full appearance-none rounded-md bg-custom-paleYellow py-1.5 pl-3 pr-8 text-base text-custom-darkRed outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
         >
           <option value={0.1}>0.1</option>
           <option value={0.2}>0.2</option>

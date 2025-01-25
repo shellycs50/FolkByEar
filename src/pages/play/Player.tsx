@@ -213,25 +213,27 @@ export default function Player() {
 
             </div>
 
-            <div className="flex flex-col gap-5 items-center justify-center md:grid md:grid-cols-3 md:justify-items-between w-1/2 bg-slate-800 m-0 p-3 rounded-xl">
+            <div className="flex flex-col gap-5 items-center justify-center md:grid md:grid-cols-3 md:justify-items-between w-1/2 bg-custom-darkRed m-0 p-3 rounded-xl">
                 <div>
                     <SpeedDropDown speed={pp.speed} setSpeed={pp.setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
                 </div>
                 <div className="flex flex-col md:flex-row gap-2 w-full justify-center items-center">
                     <motion.a
+                        className="cursor-pointer rounded-full text-custom-paleYellow bg-custom-amberBrown shadow-sm hover:bg-custom-paleYellow hover:text-custom-amberBrown focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         whileTap={{ scale: 0.9 }}
                         onClick={handleBackwardClick}>
-                        <BackwardIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
+                        <BackwardIcon className="w-12 h-12 p-2" />
                     </motion.a>
                     <motion.a
-                        whileTap={{ scale: 0.9 }}
+                        className="cursor-pointer rounded-full text-custom-paleYellow bg-custom-amberBrown shadow-sm hover:bg-custom-paleYellow hover:text-custom-amberBrown" whileTap={{ scale: 0.9 }}
                         onClick={handlePlayPauseClick}>
-                        <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
+                        <PlayPauseIcon className="w-12 h-12 p-2" />
                     </motion.a>
                     <motion.a
+                        className="cursor-pointer rounded-full text-custom-paleYellow  bg-custom-amberBrown shadow-sm hover:bg-custom-paleYellow hover:text-custom-amberBrown focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         whileTap={{ scale: 0.9 }}
                         onClick={handleNextClick}>
-                        <ForwardIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
+                        <ForwardIcon className="w-12 h-12 p-2" />
                     </motion.a>
                 </div>
                 <div className="w-1/2 md:w-auto">

@@ -5,7 +5,7 @@ import YouTube from 'react-youtube'
 import ReactSlider from "react-slider";
 import debounce from 'lodash.debounce'
 import SpeedDropDown from "packages/builder/components/SpeedDropDown";
-import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, PlayPauseIcon } from "@heroicons/react/16/solid";
+import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, PlayPauseIcon, PlusIcon } from "@heroicons/react/16/solid";
 import { useLooperStore } from "packages/looper/store";
 import { useYouTubePlayer } from "packages/looper/useYoutubePlayer";
 import { useTuneBuilderStore } from "packages/builder/store";
@@ -21,6 +21,7 @@ import { useRouter } from "next/router";
 import BuilderHeader from "packages/builder/components/BuilderHeader";
 import DangerDialog from "packages/misc/DangerDialog";
 import Header from "packages/header/Header";
+import { GeistSans } from "geist/font/sans";
 export default function CreateTune() {
 
     const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed, isPlaying } = useLooperStore();
@@ -273,42 +274,46 @@ export default function CreateTune() {
 
                                     <div className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 flex flex-row gap-3">
                                         <motion.a
+                                            className="cursor-pointer rounded-full bg-indigo-600  text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                             whileTap={{ scale: 0.9 }}
                                             onClick={() => yt.voidPlayPause()} >
-                                            <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" />
+                                            <PlayPauseIcon className="w-12 h-12 p-2" />
                                         </motion.a>
                                     </div>
                                     <div className="flex flex-row flex-wrap gap-3">
                                         <motion.a
                                             whileTap={{ scale: 0.9 }}
-                                            className={clsx(
-                                                'bg-slate-900 text-white p-3 rounded-2xl cursor-pointer',
-                                                { 'border-4 border-green-500': builder.phrases.length === 0 }
-                                            )} onClick={() => {
+                                            className="cursor-pointer rounded-full bg-indigo-600  text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                            onClick={() => {
                                                 const start = phrases[phrases.length - 1]?.endTime ?? 0
                                                 setSliderValues([start, start + 5])
                                                 createPhrase()
 
-                                            }}><p className="select-none">Add Phrase</p></motion.a>
-                                        {/* <RepeatDropDown /> */}
+                                            }}>
+
+                                            <PlusIcon aria-hidden="true" className="w-12 h-12" />
+
+                                        </motion.a>
 
 
                                         {isZoomed ?
                                             <motion.a
+                                                className="cursor-pointer rounded-full bg-indigo-600  text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                                 whileTap={{ scale: 0.9 }}
                                                 onClick={() => {
                                                     setIsZoomed(false)
                                                     unZoomTrack()
                                                 }}>
-                                                <MagnifyingGlassMinusIcon className="w-12 h-12 bg-slate-900 rounded-xl text-white cursor-pointer" />
+                                                <MagnifyingGlassMinusIcon className="w-12 h-12 " />
                                             </motion.a> :
                                             <motion.a
+                                                className="cursor-pointer rounded-full bg-indigo-600  text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                                 whileTap={{ scale: 0.9 }}
                                                 onClick={() => {
                                                     setIsZoomed(true)
                                                     zoomTrack(sliderValues[0]!, sliderValues[1]!)
                                                 }}>
-                                                <MagnifyingGlassPlusIcon className="w-12 h-12 bg-slate-900 rounded-xl text-white cursor-pointer" />
+                                                <MagnifyingGlassPlusIcon className="w-12 h-12" />
 
                                             </motion.a>}
                                     </div>
@@ -323,7 +328,7 @@ export default function CreateTune() {
                             <motion.button
                                 whileTap={{ scale: 0.9 }}
                                 onClick={() => warn('clear')}
-                                className="self-start bg-slate-900 text-white p-3 rounded-2xl select-none">
+                                className="select-none rounded-md bg-white/10 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-white/20">
                                 Start a new tune
                             </motion.button>
 
@@ -332,7 +337,7 @@ export default function CreateTune() {
                                 <motion.button
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => playToast('Player link copied to clipboard 💪')}
-                                    className="bg-slate-900 text-white p-3 rounded-2xl select-none">Copy Player Link
+                                    className="select-none rounded-md bg-white/10 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-white/20">Copy player link
                                 </motion.button>
                             </CopyToClipboard>
 
@@ -341,7 +346,8 @@ export default function CreateTune() {
                                 <motion.button
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => playToast(' Builder link copied to clipboard 💪')}
-                                    className="bg-slate-900 text-white p-3 rounded-2xl select-none">Copy Builder Link
+                                    className="select-none rounded-md bg-white/10 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-white/20"
+                                >Copy builder link
                                 </motion.button>
                             </CopyToClipboard>
 
@@ -364,6 +370,7 @@ export default function CreateTune() {
                         pauseOnHover
                         theme="light"
                         transition={Bounce}
+                        className={`${GeistSans.className}` + 'font-bold'}
                     />
                     <DangerDialog {...dangerDialogArgs} />
                 </div>

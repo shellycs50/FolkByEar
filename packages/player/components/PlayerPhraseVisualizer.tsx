@@ -25,8 +25,10 @@ export const PlayerPhraseVisualizer = () => {
                 {data.phrases.map((phrase) => (
                     <a key={phrase.idx} className=
                         {clsx(
-                            'border border-black p-2 m-2 text-white cursor-pointer h-9 w-9 overflow-hidden text-center flex justify-center items-center',
-                            { 'bg-green-300': pp.currentPhraseIdxs.includes(phrase.idx) }
+                            ' p-2 m-2 cursor-pointer h-9 w-9 overflow-hidden text-center flex justify-center items-center',
+                            { 'bg-custom-darkRed text-custom-paleYellow': pp.currentPhraseIdxs.includes(phrase.idx) },
+                            { 'text-white': !pp.currentPhraseIdxs.includes(phrase.idx) }
+
                         )}
                         onClick={() => {
                             pp.togglePhraseIdx(phrase.idx)
