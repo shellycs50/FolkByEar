@@ -266,43 +266,52 @@ export default function CreateTune() {
 
                                 </div>
 
-                                <div className="flex justify-between w-full items-end">
-                                    <motion.a
-                                        whileTap={{ scale: 0.9 }}
-                                        className={clsx(
-                                            'bg-slate-900 text-white p-3 rounded-2xl cursor-pointer',
-                                            { 'border-4 border-green-500': builder.phrases.length === 0 }
-                                        )} onClick={() => {
-                                            const start = phrases[phrases.length - 1]?.endTime ?? 0
-                                            setSliderValues([start, start + 5])
-                                            createPhrase()
+                                <div className="flex justify-between w-full items-end flex-wrap gap-3 relative">
+                                    <div>
+                                        <SpeedDropDown speed={speed} setSpeed={setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
+                                    </div>
 
-                                        }}><p className="select-none">Add Phrase</p></motion.a>
-                                    {/* <RepeatDropDown /> */}
-                                    <SpeedDropDown speed={speed} setSpeed={setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
-                                    <motion.a
-                                        whileTap={{ scale: 0.9 }}
-                                        onClick={() => yt.voidPlayPause()} >
-                                        <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" />
-                                    </motion.a>
-                                    {isZoomed ?
+                                    <div className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 flex flex-row gap-3">
                                         <motion.a
                                             whileTap={{ scale: 0.9 }}
-                                            onClick={() => {
-                                                setIsZoomed(false)
-                                                unZoomTrack()
-                                            }}>
-                                            <MagnifyingGlassMinusIcon className="w-10 h-10 bg-slate-900 rounded-xl text-white cursor-pointer" />
-                                        </motion.a> :
+                                            onClick={() => yt.voidPlayPause()} >
+                                            <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" />
+                                        </motion.a>
+                                    </div>
+                                    <div className="flex flex-row flex-wrap gap-3">
                                         <motion.a
                                             whileTap={{ scale: 0.9 }}
-                                            onClick={() => {
-                                                setIsZoomed(true)
-                                                zoomTrack(sliderValues[0]!, sliderValues[1]!)
-                                            }}>
-                                            <MagnifyingGlassPlusIcon className="w-10 h-10 bg-slate-900 rounded-xl text-white cursor-pointer" />
+                                            className={clsx(
+                                                'bg-slate-900 text-white p-3 rounded-2xl cursor-pointer',
+                                                { 'border-4 border-green-500': builder.phrases.length === 0 }
+                                            )} onClick={() => {
+                                                const start = phrases[phrases.length - 1]?.endTime ?? 0
+                                                setSliderValues([start, start + 5])
+                                                createPhrase()
 
-                                        </motion.a>}
+                                            }}><p className="select-none">Add Phrase</p></motion.a>
+                                        {/* <RepeatDropDown /> */}
+
+
+                                        {isZoomed ?
+                                            <motion.a
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={() => {
+                                                    setIsZoomed(false)
+                                                    unZoomTrack()
+                                                }}>
+                                                <MagnifyingGlassMinusIcon className="w-12 h-12 bg-slate-900 rounded-xl text-white cursor-pointer" />
+                                            </motion.a> :
+                                            <motion.a
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={() => {
+                                                    setIsZoomed(true)
+                                                    zoomTrack(sliderValues[0]!, sliderValues[1]!)
+                                                }}>
+                                                <MagnifyingGlassPlusIcon className="w-12 h-12 bg-slate-900 rounded-xl text-white cursor-pointer" />
+
+                                            </motion.a>}
+                                    </div>
                                 </div>
                             </div>
                         </div>
