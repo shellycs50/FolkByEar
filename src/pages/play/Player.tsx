@@ -167,18 +167,21 @@ export default function Player() {
                     onChange={(values) => pp.setSliderValues(values)}
                     minDistance={.05}
                 />
-                <div
-                    className="absolute top-5 border-l-0 border-r-2 z-30 h-3"
-                    style={{
-                        width: `${((pp.currentTime / (pp.duration * 1.04)) * 1000)}%`,
-                        // transition: 'width 0.1s linear', // Smooth animation
-                    }}
-                ></div>
+                {pp.isPlaying && (
+                    <div
+                        className="absolute top-5 border-l-0 border-r-2 z-30 h-3"
+                        style={{
+                            width: `${((pp.currentTime / (pp.duration * 1.04)) * 1000)}%`,
+                            // transition: 'width 0.1s linear', // Smooth animation
+                        }}
+                    ></div>
+                )}
+
             </div>
             <div className="flex flex-col lg:flex-row items-center justify-center w-1/2 relative">
                 <motion.a
                     whileTap={{ scale: 0.9 }}
-                    className="xl:absolute xl:left-0" onClick={handlePhraseReset}>
+                    className="2xl:absolute 2xl:left-0" onClick={handlePhraseReset}>
                     <ArrowPathIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
                 </motion.a>
                 <div className="justify-self-center">
@@ -210,7 +213,7 @@ export default function Player() {
                     <RestTimeDropDown restTime={pp.restTime} setRestTime={pp.setRestTime} />
                 </div>
             </div>
-            <div className="block xl:fixed xl:left-0 ">
+            <div className="block 2xl:fixed 2xl:left-0 ">
                 <Instructions />
             </div>
         </div>
