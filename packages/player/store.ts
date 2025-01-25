@@ -86,27 +86,87 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   hasStarted: false,
   setHasStarted: (hasStarted) => set({ hasStarted: hasStarted }),
   data: {
-    videoId: "Xk8zy9kpVc0",
+    videoId: "qoPdu64kG84",
     phrases: [
       {
         idx: 0,
-        startTime: 36.34,
-        endTime: 40.69,
+        startTime: 16.788,
+        endTime: 20.813,
       },
       {
         idx: 1,
-        startTime: 40.69,
-        endTime: 45.55,
+        startTime: 20.925,
+        endTime: 24.93,
       },
       {
         idx: 2,
-        startTime: 44.84,
-        endTime: 49.42,
+        startTime: 25.04,
+        endTime: 28.975,
       },
       {
         idx: 3,
-        startTime: 49.42,
-        endTime: 53.89,
+        startTime: 28.975,
+        endTime: 33.11,
+      },
+      {
+        idx: 4,
+        startTime: 33.205,
+        endTime: 37.155,
+      },
+      {
+        idx: 5,
+        startTime: 37.2,
+        endTime: 41.15,
+      },
+      {
+        idx: 6,
+        startTime: 41.31,
+        endTime: 45.195,
+      },
+      {
+        idx: 7,
+        startTime: 45.195,
+        endTime: 49.19,
+      },
+      {
+        idx: 8,
+        startTime: 49.295,
+        endTime: 53.305,
+      },
+      {
+        idx: 9,
+        startTime: 53.335,
+        endTime: 57.26,
+      },
+      {
+        idx: 10,
+        startTime: 57.345,
+        endTime: 61.245,
+      },
+      {
+        idx: 11,
+        startTime: 61.245,
+        endTime: 65.27,
+      },
+      {
+        idx: 12,
+        startTime: 65.405,
+        endTime: 69.3,
+      },
+      {
+        idx: 13,
+        startTime: 69.465,
+        endTime: 73.315,
+      },
+      {
+        idx: 14,
+        startTime: 73.385,
+        endTime: 77.31,
+      },
+      {
+        idx: 15,
+        startTime: 77.455,
+        endTime: 81.385,
       },
     ],
   },
