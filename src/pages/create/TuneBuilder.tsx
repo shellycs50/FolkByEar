@@ -13,6 +13,10 @@ import { useTuneBuilderStore } from "packages/builder/store";
 import { PhraseVisualizer } from "packages/builder/components/PhraseVisualizer";
 import clsx from "clsx";
 import Link from "next/link";
+import { CopyToClipboard } from 'react-copy-to-clipboard'
+import { motion } from "framer-motion";
+import Instructions from "packages/builder/components/Instructions";
+import { toast, ToastContainer, Bounce } from 'react-toastify'
 export default function CreateTune() {
 
     const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
@@ -83,7 +87,6 @@ export default function CreateTune() {
         }
     }
 
-
     const updatePhrases = useCallback((sliderValues: number[] = [0, duration]) => {
         if (!phrases[builder.selectedPhraseIdx]) return
         const newPhrases = [...phrases]
@@ -92,9 +95,24 @@ export default function CreateTune() {
         builder.setPhrases(newPhrases)
     }, [builder, duration, phrases])
 
+    const playheadPercentage = React.useMemo(() => {
+        const top = currentTime - trackMin
+        const bottom = trackMax - trackMin
+        return (top / bottom) * 100 * 0.96
+    }, [currentTime, trackMin, trackMax])
 
+    const copiedToast = () => toast.success('💪 Code copied. Visit the player and paste it in!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+    });
 
-    // loop will often overun its bounds
     return (
         <>
             {!builder.videoId ? (
@@ -130,22 +148,16 @@ export default function CreateTune() {
                         <Link href="/play"
                             className="bg-slate-900 text-white p-3 rounded-2xl">Go to Player</Link>
                     </div>
-                    <div className="flex flex-col gap-5 fixed h-screen p-5">
-
-                        <p className="text-white text-center bg-slate-400">data</p>
-                        <textarea className="text-white text-xs bg-slate-800 p-2 rounded-lg h-1/3" value={JSON.stringify(builder, null, 2)}>
-                        </textarea>
-                    </div>
 
                     <div className="flex flex-col gap-5 items-center justify-center pt-0 m-0 w-full">
                         <div className="w-full flex flex-col items-center gap-5">
                             <PhraseVisualizer />
                             <div className="relative">
                                 <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
-                                <div className="absolute top-0 left-0 w-full h-full z-10 cursor-not-allowed"></div>
+                                <a onClick={yt.voidPlayPause} className="absolute top-0 left-0 w-full h-full z-10"></a>
                             </div>
                             <div className="flex flex-col justify-center items-center gap-10 w-full sm:w-2/3 md:w-7/12 bg-slate-800 border-slate-900 border-2 p-8 rounded-3xl">
-                                <div className="w-full bg-slate-600 p-5 pb-8 rounded-3xl flex">
+                                <div className="w-full bg-slate-600 p-5 pb-8 rounded-3xl flex relative">
                                     <ReactSlider
                                         value={sliderValues}
                                         onAfterChange={(newSliderValues) => {
@@ -169,38 +181,92 @@ export default function CreateTune() {
                                         max={trackMax} //duration is in 10th of a second ReactSlider takes arg in seconds
                                         minDistance={.05}
                                     />
+                                    {/* <div
+                                        className="absolute top-5 border-l-0 border-r-2 z-30 h-3"
+                                        style={{
+                                            width: `${(((currentTime) / ((trackMax - trackMin) * 1.04)) * 100)}%`,
+                                            // transition: 'width 0.1s linear', // Smooth animation
+                                        }}
+                                    ></div> */}
+                                    <div
+                                        className="absolute top-5 border-l-0 border-r-2 z-30 h-3"
+                                        style={{
+                                            width: `${playheadPercentage}%`,
+                                            // transition: 'width 0.1s linear', // Smooth animation
+                                        }}
+                                    ></div>
                                 </div>
 
                                 <div className="flex justify-between w-full items-end">
-                                    <a className={clsx(
-                                        'bg-slate-900 text-white p-3 rounded-2xl cursor-pointer',
-                                        { 'border-4 border-green-500': builder.phrases.length === 0 }
-                                    )} onClick={() => {
-                                        const start = phrases[phrases.length - 1]?.endTime ?? 0
-                                        setSliderValues([start, start + 5])
-                                        createPhrase()
+                                    <motion.a
+                                        whileTap={{ scale: 0.9 }}
+                                        className={clsx(
+                                            'bg-slate-900 text-white p-3 rounded-2xl cursor-pointer',
+                                            { 'border-4 border-green-500': builder.phrases.length === 0 }
+                                        )} onClick={() => {
+                                            const start = phrases[phrases.length - 1]?.endTime ?? 0
+                                            setSliderValues([start, start + 5])
+                                            createPhrase()
 
-                                    }}><p>Create New</p></a>
+                                        }}><p className="select-none">Create New</p></motion.a>
                                     {/* <RepeatDropDown /> */}
                                     <SpeedDropDown speed={speed} setSpeed={setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
-                                    <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => yt.voidPlayPause()} />
+                                    <motion.a
+                                        whileTap={{ scale: 0.9 }}
+                                        onClick={() => yt.voidPlayPause()} >
+                                        <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" />
+                                    </motion.a>
                                     {isZoomed ?
-                                        <MagnifyingGlassMinusIcon className="w-10 h-10 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => {
-                                            setIsZoomed(false)
-                                            unZoomTrack()
-                                        }} /> :
-                                        <MagnifyingGlassPlusIcon className="w-10 h-10 bg-slate-900 rounded-xl text-white cursor-pointer" onClick={() => {
+                                        <motion.a
+                                            whileTap={{ scale: 0.9 }}
+                                            onClick={() => {
+                                                setIsZoomed(false)
+                                                unZoomTrack()
+                                            }}>
+                                            <MagnifyingGlassMinusIcon className="w-10 h-10 bg-slate-900 rounded-xl text-white cursor-pointer" />
+                                        </motion.a> :
+                                        <motion.a
+                                            whileTap={{ scale: 0.9 }}
+                                            onClick={() => {
+                                                setIsZoomed(true)
+                                                zoomTrack(sliderValues[0]!, sliderValues[1]!)
+                                            }}>
+                                            <MagnifyingGlassPlusIcon className="w-10 h-10 bg-slate-900 rounded-xl text-white cursor-pointer" />
 
-                                            setIsZoomed(true)
-                                            zoomTrack(sliderValues[0]!, sliderValues[1]!)
-                                        }} />}
+                                        </motion.a>}
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-            )}
+                    <div className="flex flex-col gap-5 lg:gap-20 justify-start items-center px-10 py-5 pb-10">
+                        <CopyToClipboard text={JSON.stringify(builder, null, 2)}>
+                            <motion.button
+                                whileTap={{ scale: 0.9 }}
+                                onClick={copiedToast}
+                                className="bg-slate-900 text-white p-3 rounded-2xl select-none">Copy Player Data</motion.button>
+                        </CopyToClipboard>
+                        <div className="block xl:fixed xl:left-0 xl:top-0 ">
+                            <Instructions />
+                        </div>
+                    </div>
+                    <ToastContainer
+                        position="top-right"
+                        autoClose={5000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick={false}
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                        theme="light"
+                        transition={Bounce}
+
+                    />
+                </div>
+            )
+            }
         </>
     );
 }

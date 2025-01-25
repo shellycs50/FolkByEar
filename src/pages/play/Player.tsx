@@ -14,6 +14,7 @@ import ReactSlider from "react-slider"
 import { fmtMSS } from "packages/looper/helpers"
 import debounce from "lodash.debounce"
 import Instructions from "packages/player/components/Instructions"
+import { motion } from "framer-motion"
 export default function Player() {
 
     const pp = usePlayerStore() //pp = phrasePlayer
@@ -135,6 +136,7 @@ export default function Player() {
     }, [handleResize])
 
 
+
     return (
         <div className="flex flex-col items-center justify-center gap-5 min-h-screen pb-20">
 
@@ -143,7 +145,8 @@ export default function Player() {
                 <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={pp.data.videoId} opts={playerOpts} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
                 <a onClick={handlePlayPauseClick} className="absolute top-0 left-0 w-full h-full z-10"></a>
             </div>
-            <div className="w-1/2 bg-slate-600 p-5 pb-8 mt-3 rounded-3xl flex">
+            <div className="w-1/2 bg-slate-600 p-5 pb-8 mt-3 rounded-3xl flex relative">
+
                 <ReactSlider
                     value={pp.sliderValues}
 
@@ -164,11 +167,20 @@ export default function Player() {
                     onChange={(values) => pp.setSliderValues(values)}
                     minDistance={.05}
                 />
+                <div
+                    className="absolute top-5 border-l-0 border-r-2 z-30 h-3"
+                    style={{
+                        width: `${((pp.currentTime / (pp.duration * 1.04)) * 1000)}%`,
+                        // transition: 'width 0.1s linear', // Smooth animation
+                    }}
+                ></div>
             </div>
             <div className="flex flex-col lg:flex-row items-center justify-center w-1/2 relative">
-                <a className="xl:absolute xl:left-0">
-                    <ArrowPathIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" onClick={handlePhraseReset} />
-                </a>
+                <motion.a
+                    whileTap={{ scale: 0.9 }}
+                    className="xl:absolute xl:left-0" onClick={handlePhraseReset}>
+                    <ArrowPathIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
+                </motion.a>
                 <div className="justify-self-center">
                     <PlayerPhraseVisualizer />
                 </div>
@@ -178,9 +190,21 @@ export default function Player() {
                     <SpeedDropDown speed={pp.speed} setSpeed={pp.setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
                 </div>
                 <div className="flex flex-row gap-2 w-full justify-center">
-                    <BackwardIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" onClick={handleBackwardClick} />
-                    <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" onClick={handlePlayPauseClick} />
-                    <ForwardIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" onClick={handleNextClick} />
+                    <motion.a
+                        whileTap={{ scale: 0.9 }}
+                        onClick={handleBackwardClick}>
+                        <BackwardIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
+                    </motion.a>
+                    <motion.a
+                        whileTap={{ scale: 0.9 }}
+                        onClick={handlePlayPauseClick}>
+                        <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
+                    </motion.a>
+                    <motion.a
+                        whileTap={{ scale: 0.9 }}
+                        onClick={handleNextClick}>
+                        <ForwardIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
+                    </motion.a>
                 </div>
                 <div className="w-1/2 md:w-auto">
                     <RestTimeDropDown restTime={pp.restTime} setRestTime={pp.setRestTime} />
@@ -189,7 +213,6 @@ export default function Player() {
             <div className="block xl:fixed xl:left-0 ">
                 <Instructions />
             </div>
-
         </div>
     )
 }

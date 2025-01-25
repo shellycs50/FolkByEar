@@ -34,14 +34,34 @@ export const useTuneBuilderStore = create<StoreState>((set) => ({
   setPhrases: (phrases) => set({ phrases: phrases }),
   createPhrase: () =>
     set((state) => {
-      const start = state.phrases[state.phrases.length - 1]?.endTime ?? 0;
+      const prevStart =
+        state.phrases[state.phrases.length - 1]?.startTime ?? null;
+      const prevEnd = state.phrases[state.phrases.length - 1]?.endTime ?? null;
+
+      if (prevStart === null || prevEnd === null) {
+        return {
+          phrases: [
+            ...state.phrases,
+            {
+              idx: state.phrases.length,
+              startTime: 0,
+              endTime: 5,
+            },
+          ],
+          selectedPhraseIdx: state.phrases.length ?? 0,
+        };
+      }
+
+      const prevDuration = prevEnd - prevStart;
+      const currentEnd = prevEnd + prevDuration;
+      console.log({ prevDuration, currentEnd, prevStart, prevEnd });
       return {
         phrases: [
           ...state.phrases,
           {
             idx: state.phrases.length,
-            startTime: start,
-            endTime: start + 5,
+            startTime: prevEnd,
+            endTime: currentEnd,
           },
         ],
         selectedPhraseIdx: state.phrases.length ?? 0,
