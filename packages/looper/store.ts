@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
 export interface LoopState {
+  isPlaying: boolean;
+  setIsPlaying: (isPlaying: boolean) => void;
   sliderValues: number[];
   setSliderValues: (values: number[]) => void;
   currentTime: number;
@@ -22,6 +24,8 @@ export interface LoopState {
 }
 
 export const useLooperStore = create<LoopState>((set) => ({
+  isPlaying: false,
+  setIsPlaying: (isPlaying) => set({ isPlaying: isPlaying }),
   sliderValues: [0, 5],
   setSliderValues: (values) => set({ sliderValues: values }),
   currentTime: 0,

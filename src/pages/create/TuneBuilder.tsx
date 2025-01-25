@@ -19,7 +19,7 @@ import Instructions from "packages/builder/components/Instructions";
 import { toast, ToastContainer, Bounce } from 'react-toastify'
 export default function CreateTune() {
 
-    const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
+    const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed, isPlaying } = useLooperStore();
     const yt = useYouTubePlayer('creator', null)
 
     const builder = useTuneBuilderStore()
@@ -102,9 +102,9 @@ export default function CreateTune() {
     }, [currentTime, trackMin, trackMax])
 
     const copiedToast = () => toast.success('💪 Code copied. Visit the player and paste it in!', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        position: "bottom-right",
+        autoClose: 1000,
+        hideProgressBar: true,
         closeOnClick: false,
         pauseOnHover: true,
         draggable: true,
@@ -188,13 +188,16 @@ export default function CreateTune() {
                                             // transition: 'width 0.1s linear', // Smooth animation
                                         }}
                                     ></div> */}
-                                    <div
-                                        className="absolute top-5 border-l-0 border-r-2 z-30 h-3"
-                                        style={{
-                                            width: `${playheadPercentage}%`,
-                                            // transition: 'width 0.1s linear', // Smooth animation
-                                        }}
-                                    ></div>
+                                    {isPlaying && (
+                                        <div
+                                            className="absolute top-5 border-l-0 border-r-2 z-30 h-3"
+                                            style={{
+                                                width: `${playheadPercentage}%`,
+                                                // transition: 'width 0.1s linear', // Smooth animation
+                                            }}
+                                        ></div>
+                                    )}
+
                                 </div>
 
                                 <div className="flex justify-between w-full items-end">
@@ -246,7 +249,7 @@ export default function CreateTune() {
                                 onClick={copiedToast}
                                 className="bg-slate-900 text-white p-3 rounded-2xl select-none">Copy Player Data</motion.button>
                         </CopyToClipboard>
-                        <div className="block xl:fixed xl:left-0 xl:top-0 ">
+                        <div className="block 2xl:fixed 2xl:left-0 2xl:top-0 ">
                             <Instructions />
                         </div>
                     </div>

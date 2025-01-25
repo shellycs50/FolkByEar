@@ -11,6 +11,8 @@ type Data = {
 };
 
 export interface PlayerState {
+  isPlaying: boolean;
+  setIsPlaying: (isPlaying: boolean) => void;
   sliderValues: number[];
   setSliderValues: (values: number[]) => void;
   currentTime: number;
@@ -43,6 +45,8 @@ const generateArray = (arr: number[]) => {
   return output;
 };
 export const usePlayerStore = create<PlayerState>((set) => ({
+  isPlaying: false,
+  setIsPlaying: (isPlaying) => set({ isPlaying: isPlaying }),
   showGuide: true,
   setShowGuide: (val) => set({ showGuide: val }),
   sliderValues: [36.34, 40.69],

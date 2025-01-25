@@ -5,7 +5,6 @@ import type PlayerStates from "youtube-player/dist/constants/PlayerStates"
 import { type PlayerState, usePlayerStore } from "packages/player/store";
 import type { LoopState } from "./store";
 import { useLooperStore } from "./store";
-import { get } from "http";
 type UserIntent = 'player' | 'creator';
 type LoopCallback = (() => void) | null;
 
@@ -19,12 +18,14 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
     let setSpeed: (speed: number) => void
     let getLatestState: (() => PlayerState) | (() => LoopState) | undefined
     let getRestTime: (() => PlayerState) | undefined
+    let setIsPlaying: (isPlaying: boolean) => void
     // this injection needs to be done better but for now it works
     if (intent === 'player') {
         ({
             setCurrentTime,
             setDuration,
             setSpeed,
+            setIsPlaying
         } = pp)
         getLatestState = usePlayerStore.getState
         getRestTime = usePlayerStore.getState
@@ -35,6 +36,7 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
             setDuration,
             setSpeed,
             setTrackMax,
+            setIsPlaying
         } = looper)
         getLatestState = useLooperStore.getState
     }
@@ -110,10 +112,12 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
         };
 
         if (playerState === 1) {
+            setIsPlaying(true)
             if (!pollingRef.current) {
                 pollingRef.current = requestAnimationFrame(poll);
             }
         } else {
+            setIsPlaying(false)
             if (pollingRef.current) {
                 cancelAnimationFrame(pollingRef.current);
                 pollingRef.current = null;
