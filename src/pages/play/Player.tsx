@@ -162,86 +162,88 @@ export default function Player() {
 
 
     return (
-        <div className="flex flex-col items-center justify-center gap-5 min-h-screen pb-20">
-            <Header />
+        <div className="bg-cus">
+            <div className="flex flex-col items-center justify-center gap-5 min-h-screen pb-20">
 
-            <div className="relative">
-                <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={pp.data.videoId} opts={playerOpts} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
-                <a onClick={handlePlayPauseClick} className="absolute top-0 left-0 w-full h-full z-10"></a>
-            </div>
-            <div className="flex flex-col 2xl:flex-row items-center justify-center w-1/2 relative">
-                <motion.a
-                    whileTap={{ scale: 0.9 }}
-                    className="" onClick={handlePhraseReset}>
-                    <ArrowPathIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
-                </motion.a>
-                <div className="justify-self-center">
-                    <PlayerPhraseVisualizer />
+                <Header />
+
+                <div className="relative">
+                    <YouTube id="yt" className=" bg-custom-darkRed p-4 rounded-xl" videoId={pp.data.videoId} opts={playerOpts} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
+                    <a onClick={handlePlayPauseClick} className="absolute top-0 left-0 w-full h-full z-10"></a>
                 </div>
-            </div>
-            <div className="w-1/2 bg-slate-600 p-5 pb-8 mt-3 rounded-3xl flex relative">
-
-                <ReactSlider
-                    value={pp.sliderValues}
-
-                    className="horizontal-slider w-full"
-                    thumbClassName="bg-white p-1 cursor-pointer relative h-3"
-                    // trackClassName classes applied globals.css
-                    withTracks={true}
-                    renderThumb={(props, state) =>
-                        <div {...props}>
-                            <div className={state.index ? "absolute p-2 rounded-xl cursor-pointer text-white -bottom-12 -right-5 border-b-2 border-gray-200" : "absolute p-2 rounded-xl cursor-pointer text-white border-gray-200 bottom-5 -right-5 border-t-2"}>
-                                <p className="select-none">{mssNums[Math.floor(state.valueNow)] ?? Math.floor(state.valueNow)}</p>
+                <div className="flex flex-col 2xl:flex-row items-center justify-center w-1/2 relative">
+                    <motion.a
+                        whileTap={{ scale: 0.9 }}
+                        className="" onClick={handlePhraseReset}>
+                        <ArrowPathIcon className="w-12 h-12 p-1 bg-custom-sandyBrown  rounded-xl text-custom-paleYellow cursor-pointer select-none" />
+                    </motion.a>
+                    <div className="justify-self-center">
+                        <PlayerPhraseVisualizer />
+                    </div>
+                </div>
+                <div className="w-1/2 bg-custom-darkRed p-5 pb-8 mt-3 rounded-3xl flex relative">
+                    <ReactSlider
+                        value={pp.sliderValues}
+                        className="horizontal-slider w-full"
+                        thumbClassName="bg-custom-paleYellow p-1 cursor-pointer relative h-3"
+                        // trackClassName classes applied globals.css
+                        withTracks={true}
+                        renderThumb={(props, state) =>
+                            <div {...props}>
+                                <div className={state.index ? "absolute p-2 rounded-xl cursor-pointer text-white -bottom-12 -right-5 border-b-2 border-gray-200" : "absolute p-2 rounded-xl cursor-pointer text-white border-gray-200 bottom-5 -right-5 border-t-2"}>
+                                    <p className="select-none">{mssNums[Math.floor(state.valueNow)] ?? Math.floor(state.valueNow)}</p>
+                                </div>
                             </div>
-                        </div>
-                    }
-                    step={.005}
-                    min={0}
-                    max={pp.duration / 10} //duration is in 10th of a second ReactSlider takes arg in seconds
-                    onChange={(values) => pp.setSliderValues(values)}
-                    minDistance={.05}
-                />
-                {pp.isPlaying && (
-                    <div
-                        className="absolute top-5 border-l-0 border-r-2 z-30 h-3"
-                        style={{
-                            width: `${((pp.currentTime / (pp.duration * 1.04)) * 1000)}%`,
-                            // transition: 'width 0.1s linear', // Smooth animation
-                        }}
-                    ></div>
-                )}
+                        }
+                        step={.005}
+                        min={0}
+                        max={pp.duration / 10} //duration is in 10th of a second ReactSlider takes arg in seconds
+                        onChange={(values) => pp.setSliderValues(values)}
+                        minDistance={.05}
+                    />
+                    {pp.isPlaying && (
+                        <div
+                            className="absolute top-5 border-l-0 border-r-2 z-30 h-3"
+                            style={{
+                                width: `${((pp.currentTime / (pp.duration * 1.04)) * 1000)}%`,
+                                // transition: 'width 0.1s linear', // Smooth animation
+                            }}
+                        ></div>
+                    )}
 
-            </div>
+                </div>
 
-            <div className="flex flex-col gap-5 items-center justify-center md:grid md:grid-cols-3 md:justify-items-between w-1/2 bg-custom-darkRed m-0 p-3 rounded-xl">
-                <div>
-                    <SpeedDropDown speed={pp.speed} setSpeed={pp.setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
+                <div className="flex flex-col gap-5 items-center justify-center md:grid md:grid-cols-3 md:justify-items-between w-1/2 bg-custom-darkRed m-0 p-3 rounded-xl">
+                    <div>
+                        <SpeedDropDown speed={pp.speed} setSpeed={pp.setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
+                    </div>
+                    <div className="flex flex-col md:flex-row gap-2 w-full justify-center items-center">
+                        <motion.a
+                            className="cursor-pointer rounded-full text-custom-paleYellow bg-custom-amberBrown shadow-sm hover:bg-custom-paleYellow hover:text-custom-amberBrown focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            whileTap={{ scale: 0.9 }}
+                            onClick={handleBackwardClick}>
+                            <BackwardIcon className="w-12 h-12 p-2" />
+                        </motion.a>
+                        <motion.a
+                            className="cursor-pointer rounded-full text-custom-paleYellow bg-custom-amberBrown shadow-sm hover:bg-custom-paleYellow hover:text-custom-amberBrown" whileTap={{ scale: 0.9 }}
+                            onClick={handlePlayPauseClick}>
+                            <PlayPauseIcon className="w-12 h-12 p-2" />
+                        </motion.a>
+                        <motion.a
+                            className="cursor-pointer rounded-full text-custom-paleYellow  bg-custom-amberBrown shadow-sm hover:bg-custom-paleYellow hover:text-custom-amberBrown focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            whileTap={{ scale: 0.9 }}
+                            onClick={handleNextClick}>
+                            <ForwardIcon className="w-12 h-12 p-2" />
+                        </motion.a>
+                    </div>
+                    <div className="w-1/2 md:w-auto">
+                        <RestTimeDropDown restTime={pp.restTime} setRestTime={pp.setRestTime} />
+                    </div>
                 </div>
-                <div className="flex flex-col md:flex-row gap-2 w-full justify-center items-center">
-                    <motion.a
-                        className="cursor-pointer rounded-full text-custom-paleYellow bg-custom-amberBrown shadow-sm hover:bg-custom-paleYellow hover:text-custom-amberBrown focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        whileTap={{ scale: 0.9 }}
-                        onClick={handleBackwardClick}>
-                        <BackwardIcon className="w-12 h-12 p-2" />
-                    </motion.a>
-                    <motion.a
-                        className="cursor-pointer rounded-full text-custom-paleYellow bg-custom-amberBrown shadow-sm hover:bg-custom-paleYellow hover:text-custom-amberBrown" whileTap={{ scale: 0.9 }}
-                        onClick={handlePlayPauseClick}>
-                        <PlayPauseIcon className="w-12 h-12 p-2" />
-                    </motion.a>
-                    <motion.a
-                        className="cursor-pointer rounded-full text-custom-paleYellow  bg-custom-amberBrown shadow-sm hover:bg-custom-paleYellow hover:text-custom-amberBrown focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        whileTap={{ scale: 0.9 }}
-                        onClick={handleNextClick}>
-                        <ForwardIcon className="w-12 h-12 p-2" />
-                    </motion.a>
+                <div className="block 2xl:fixed 2xl:left-0 top-1 ">
+                    <Instructions />
                 </div>
-                <div className="w-1/2 md:w-auto">
-                    <RestTimeDropDown restTime={pp.restTime} setRestTime={pp.setRestTime} />
-                </div>
-            </div>
-            <div className="block 2xl:fixed 2xl:left-0 top-1 ">
-                <Instructions />
+
             </div>
         </div>
     )

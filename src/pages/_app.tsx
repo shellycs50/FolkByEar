@@ -13,7 +13,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <div className="bg-slate-700">
+      <div className="bg-custom-darkBrown">
         <div className={GeistSans.className}>
           <Component {...pageProps} />
         </div>

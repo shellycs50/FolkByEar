@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 .track-0 {
-    @apply border-slate-900 bg-slate-700 h-3 border-4;
+    @apply border-custom-darkBrown bg-custom-sandyBrown h-3 border-4;
 }
 
 .track-1 {
-    @apply border-slate-900 bg-purple-400 h-3 border-4;
+    @apply border-custom-darkBrown bg-custom-paleYellow h-3 border-4;
 }
 
 .track-2 {
-    @apply border-slate-900 bg-slate-700 h-3 border-4;
+    @apply border-custom-darkBrown bg-custom-sandyBrown h-3 border-4;
 }
 
