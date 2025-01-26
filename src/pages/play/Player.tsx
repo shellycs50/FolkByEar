@@ -169,18 +169,10 @@ export default function Player() {
                 <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={pp.data.videoId} opts={playerOpts} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
                 <a onClick={handlePlayPauseClick} className="absolute top-0 left-0 w-full h-full z-10"></a>
             </div>
-            <div className="flex flex-col 2xl:flex-row items-center justify-center w-1/2 relative">
-                <motion.a
-                    whileTap={{ scale: 0.9 }}
-                    className="" onClick={handlePhraseReset}>
-                    <ArrowPathIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
-                </motion.a>
-                <div className="justify-self-center">
-                    <PlayerPhraseVisualizer />
-                </div>
+            <div className="flex flex-col 2xl:flex-row items-center justify-center w-full sm:w-8/12 lg:w-1/2 relative px-3">
+                <PlayerPhraseVisualizer />
             </div>
-            <div className="w-1/2 bg-slate-600 p-5 pb-8 mt-3 rounded-3xl flex relative">
-
+            <div className="w-11/12 sm:w-8/12 lg:w-1/2 bg-slate-600 p-5 pb-8 mt-3 mb-4 rounded-3xl flex relative ">
                 <ReactSlider
                     value={pp.sliderValues}
 
@@ -213,11 +205,11 @@ export default function Player() {
 
             </div>
 
-            <div className="flex flex-col gap-5 items-center justify-center md:grid md:grid-cols-3 md:justify-items-between w-1/2 bg-slate-800 m-0 p-3 rounded-xl">
+            <div className="flex flex-col gap-5 items-center justify-center md:grid md:grid-cols-3 md:justify-items-between w-11/12 sm:w-8/12 lg:w-1/2 bg-slate-800 m-0 p-3 rounded-xl">
                 <div>
                     <SpeedDropDown speed={pp.speed} setSpeed={pp.setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
                 </div>
-                <div className="flex flex-col md:flex-row gap-2 w-full justify-center items-center">
+                <div className="flex flex-col xs:flex-row gap-2 w-full justify-center items-center">
                     <motion.a
                         whileTap={{ scale: 0.9 }}
                         onClick={handleBackwardClick}>
@@ -234,7 +226,12 @@ export default function Player() {
                         <ForwardIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
                     </motion.a>
                 </div>
-                <div className="w-1/2 md:w-auto">
+                <div className="md:w-auto flex flex-col xs:flex-row justify-end items-end">
+                    <motion.a
+                        whileTap={{ scale: 0.9 }}
+                        onClick={handlePhraseReset}>
+                        <ArrowPathIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
+                    </motion.a>
                     <RestTimeDropDown restTime={pp.restTime} setRestTime={pp.setRestTime} />
                 </div>
             </div>
