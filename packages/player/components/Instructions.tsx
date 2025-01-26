@@ -19,7 +19,7 @@ export default function Instructions() {
                     <dl className="divide-y divide-white/10">
                         <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
                             <dt><textarea className="w-10 h-10 overflow-hidden"></textarea></dt>
-                            <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Enter your loop code</dd>
+                            <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Enter a link from the creator</dd>
                         </div>
                         <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
                             <dt><PlayPauseIcon className="h-8 w-8 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" /></dt>

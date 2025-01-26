@@ -2,7 +2,7 @@ import MagnifyingGlassPlusIcon from "@heroicons/react/16/solid/MagnifyingGlassPl
 import ReactSlider from "react-slider";
 const PhraseExample = () => (
     <a className='border border-black p-2 text-white cursor-pointer'
-    >0
+    >1
     </a>
 )
 export default function Instructions() {

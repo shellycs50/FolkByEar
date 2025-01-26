@@ -165,8 +165,8 @@ export default function CreateTune() {
     }, [router]);
 
     const dangerDialogArgs = {
-        title: "Leave Builder",
-        message: "Remember to copy builder and player links before leaving.",
+        title: "Leaving Creator",
+        message: "Remember to copy creator and player links before leaving.",
         cta: "Leave",
         open: dangerIsOpen,
         setOpen: setDangerIsOpen,
@@ -219,7 +219,7 @@ export default function CreateTune() {
                                 <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
                                 <a onClick={yt.voidPlayPause} className="absolute top-0 left-0 w-full h-full z-10"></a>
                             </div>
-                            <div className="justify-self-center w-1/2">
+                            <div className="justify-self-center w-full sm:w-1/2">
                                 <PhraseVisualizer />
                             </div>
                             <div className="flex flex-col justify-center items-center gap-10 w-full sm:w-2/3 md:w-7/12 bg-slate-800 border-slate-900 border-2 p-8 rounded-3xl">
@@ -247,13 +247,6 @@ export default function CreateTune() {
                                         max={trackMax} //duration is in 10th of a second ReactSlider takes arg in seconds
                                         minDistance={.05}
                                     />
-                                    {/* <div
-                                        className="absolute top-5 border-l-0 border-r-2 z-30 h-3"
-                                        style={{
-                                            width: `${(((currentTime) / ((trackMax - trackMin) * 1.04)) * 100)}%`,
-                                            // transition: 'width 0.1s linear', // Smooth animation
-                                        }}
-                                    ></div> */}
                                     {isPlaying && (
                                         <div
                                             className="absolute top-5 border-l-0 border-r-2 z-30 h-3"
@@ -266,12 +259,12 @@ export default function CreateTune() {
 
                                 </div>
 
-                                <div className="flex justify-between w-full items-end flex-wrap gap-3 relative">
+                                <div className="flex justify-center sm:justify-between w-full items-end flex-wrap gap-8 sm:gap-3 relative">
                                     <div>
                                         <SpeedDropDown speed={speed} setSpeed={setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
                                     </div>
 
-                                    <div className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 flex flex-row gap-3">
+                                    <div className="sm:absolute sm:-translate-x-1/2 sm:-translate-y-1/2 sm:top-1/2 sm:left-1/2 flex flex-row gap-3">
                                         <motion.a
                                             whileTap={{ scale: 0.9 }}
                                             onClick={() => yt.voidPlayPause()} >
@@ -318,8 +311,7 @@ export default function CreateTune() {
                     </div>
 
                     <div className="flex flex-col gap-5 lg:gap-20 justify-start items-center px-10 py-5 pb-10">
-                        <div className="flex flex-wrap gap-5">
-
+                        <div className="flex justify-center flex-wrap gap-5">
                             <motion.button
                                 whileTap={{ scale: 0.9 }}
                                 onClick={() => warn('clear')}
@@ -332,7 +324,7 @@ export default function CreateTune() {
                                 <motion.button
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => playToast('Player link copied to clipboard 💪')}
-                                    className="bg-slate-900 text-white p-3 rounded-2xl select-none">Copy Player Link
+                                    className="bg-slate-900 text-white p-3 rounded-2xl select-none">Copy player link
                                 </motion.button>
                             </CopyToClipboard>
 
@@ -341,11 +333,9 @@ export default function CreateTune() {
                                 <motion.button
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => playToast(' Builder link copied to clipboard 💪')}
-                                    className="bg-slate-900 text-white p-3 rounded-2xl select-none">Copy Builder Link
+                                    className="bg-slate-900 text-white p-3 rounded-2xl select-none">Copy creator link
                                 </motion.button>
                             </CopyToClipboard>
-
-
                         </div>
 
                         <div className="block 2xl:fixed 2xl:left-0 2xl:top-0 ">
