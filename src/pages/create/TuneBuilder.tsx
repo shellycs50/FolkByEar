@@ -24,6 +24,7 @@ import Header from "packages/header/Header";
 import Head from "next/head";
 export default function CreateTune() {
 
+
     const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed, isPlaying } = useLooperStore();
     const yt = useYouTubePlayer('creator', null)
     const builder = useTuneBuilderStore()
@@ -38,20 +39,7 @@ export default function CreateTune() {
             query: {},
         }, undefined, { shallow: true });
     }
-    React.useEffect(() => {
-        const q = router.query
-        if (typeof q.data === 'string' && q.data.length > 0) {
-            const res = dataDecompress(q.data)
-            if (res !== null) {
-                builder.setPhrases(res.phrases)
-                builder.setVideoId(res.videoId)
-                setVideoId(res.videoId)
-                setSliderValues([res.phrases[0]?.startTime ?? 0, res.phrases[0]?.endTime ?? 5])
-                builder.setSelectedPhrase(0)
-                void removeQueryParams()
-            }
-        }
-    }, [])
+
 
     const playerOpts = React.useState({
         height: yt.initialBuilderSizes[1],
@@ -128,14 +116,14 @@ export default function CreateTune() {
     }, [currentTime, trackMin, trackMax])
 
     const playToast = (message: string) => toast.success(message, {
-        position: "bottom-right",
-        autoClose: 3000,
+        position: "top-right",
+        autoClose: 1000,
         hideProgressBar: true,
         closeOnClick: false,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "light",
+        theme: "dark",
         transition: Bounce,
     });
 
@@ -183,6 +171,41 @@ export default function CreateTune() {
     const tryToLeave = () => {
         warn('leave')
     }
+
+    React.useEffect(() => {
+        const handleBeforeUnload = (event: { returnValue: string; }) => {
+            const message = "You have unsaved changes. Are you sure you want to leave?";
+            event.returnValue = message;
+            return message;
+        }
+
+        if (builder.videoId) {
+            window.addEventListener('beforeunload', handleBeforeUnload);
+        }
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, [builder]);
+
+    React.useEffect(() => {
+        const q = router.query
+        if (typeof q.data === 'string' && q.data.length > 0) {
+            const res = dataDecompress(q.data)
+
+            if (res === null) return
+
+            builder.setPhrases(res.phrases)
+            builder.setVideoId(res.videoId)
+            setVideoId(res.videoId)
+            setSliderValues([res.phrases[0]?.startTime ?? 0, res.phrases[0]?.endTime ?? 5])
+            builder.setSelectedPhrase(0)
+            void removeQueryParams()
+
+        }
+    }, [])
+
+
     return (
         <>
             {!builder.videoId ? (
@@ -311,8 +334,8 @@ export default function CreateTune() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-5 lg:gap-20 justify-start items-center px-10 py-5 pb-10">
-                        <div className="flex justify-center flex-wrap gap-5">
+                    <div className="flex flex-col gap-5 lg:gap-20 justify-start items-center px-10 py-5 pb-10 2xl:fixed 2xl:right-0 2xl:bottom-0 2xl:p-10 2xl:bg-slate-600 2xl:rounded-3xl 2xl:rounded-br-none 2xl:rounded-tr-none 2xl:shadow-2xl">
+                        <div className="flex justify-center flex-wrap gap-5 2xl:flex-col">
                             <motion.button
                                 whileTap={{ scale: 0.9 }}
                                 onClick={() => warn('clear')}
