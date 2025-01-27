@@ -25,6 +25,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <meta name="twitter:description" content="Mark, loop, and learn from any video." />
 
         <link rel="canonical" href="https://looplab-beta.vercel.app" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       <SessionProvider session={session}>
         <div className="bg-slate-700">
