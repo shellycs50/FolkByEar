@@ -5,8 +5,8 @@ export default function BuilderHeader({ tryToLeave }: { tryToLeave: () => void }
     return (
         <div className="w-1/2 flex flex-col justify-center items-center md:border-b border-white/10 relative shadow-2xl">
             <div className="hidden md:flex flex-col gap-3 items-center p-4 rounded-b-3xl">
-                <h1 className="text-md lg:text-4xl text-gray-100 font-semibold">Folk By Ear</h1>
-                <p className="hidden lg:block lg:text-sm text-gray-300">Learn tunes faaaast</p>
+                <h1 className="text-md lg:text-4xl text-gray-100 font-semibold">LoopLab</h1>
+                <p className="hidden lg:block lg:text-sm text-gray-300">Mark, loop, and learn from any video.</p>
             </div>
             <div className="mt-4 md:mt-0 md:self-end md:absolute">
                 <motion.div
