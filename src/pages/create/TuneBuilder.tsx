@@ -172,21 +172,23 @@ export default function CreateTune() {
         warn('leave')
     }
 
-    React.useEffect(() => {
-        const handleBeforeUnload = (event: { returnValue: string; }) => {
-            const message = "You have unsaved changes. Are you sure you want to leave?";
-            event.returnValue = message;
-            return message;
-        }
+    // I don't like this as it shouldn't run when danger dialog has been used
 
-        if (builder.videoId) {
-            window.addEventListener('beforeunload', handleBeforeUnload);
-        }
+    // React.useEffect(() => {
+    //     const handleBeforeUnload = (event: { returnValue: string; }) => {
+    //         const message = "You have unsaved changes. Are you sure you want to leave?";
+    //         event.returnValue = message;
+    //         return message;
+    //     }
 
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-        };
-    }, [builder]);
+    //     if (builder.videoId) {
+    //         window.addEventListener('beforeunload', handleBeforeUnload);
+    //     }
+
+    //     return () => {
+    //         window.removeEventListener('beforeunload', handleBeforeUnload);
+    //     };
+    // }, [builder]);
 
     React.useEffect(() => {
         const q = router.query
