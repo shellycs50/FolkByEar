@@ -32,7 +32,7 @@ const env = process.env.NODE_ENV;
 const baseUrl =
   env === "development"
     ? "http://localhost:3000"
-    : "https://folk-by-ear.vercel.app";
+    : "https://looplab-beta.vercel.app";
 
 export const getPlayerUrl = (builder: BuilderStoreState) => {
   try {

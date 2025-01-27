@@ -21,6 +21,7 @@ import { useRouter } from "next/router";
 import BuilderHeader from "packages/builder/components/BuilderHeader";
 import DangerDialog from "packages/misc/DangerDialog";
 import Header from "packages/header/Header";
+import Head from "next/head";
 export default function CreateTune() {
 
     const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed, isPlaying } = useLooperStore();
@@ -332,7 +333,7 @@ export default function CreateTune() {
                                 text={builderUrl ?? ''}>
                                 <motion.button
                                     whileTap={{ scale: 0.9 }}
-                                    onClick={() => playToast(' Builder link copied to clipboard 💪')}
+                                    onClick={() => playToast('Creator link copied to clipboard 💪')}
                                     className="bg-slate-900 text-white p-3 rounded-2xl select-none">Copy creator link
                                 </motion.button>
                             </CopyToClipboard>
