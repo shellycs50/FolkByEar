@@ -5,8 +5,8 @@ import PlayPauseIcon from "@heroicons/react/16/solid/PlayPauseIcon";
 import { LinkIcon } from "@heroicons/react/16/solid";
 import ReactSlider from "react-slider";
 const PhraseExample = () => (
-    <div className='border border-black p-2 text-white cursor-pointer'
-    >0
+    <div className='border border-black p-2 text-white cursor-pointer w-10 h-10 flex items-center justify-center'>
+        0
     </div>
 )
 export default function Instructions() {
@@ -18,31 +18,31 @@ export default function Instructions() {
                 </div>
                 <div className="mt-6 border-t border-white/10">
                     <dl className="divide-y divide-white/10">
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
+                        <div className="flex flex-col gap-4 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
                             <dt><LinkIcon className="h-8 w-8 p-1 " /></dt>
                             <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Enter a link from the creator</dd>
                         </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
+                        <div className="flex flex-col gap-4 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
                             <dt><PlayPauseIcon className="h-8 w-8 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" /></dt>
                             <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Get started by hitting play</dd>
                         </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
+                        <div className="flex flex-col gap-4 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
                             <dt><PhraseExample /></dt>
                             <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Click <span className="text-green-400">phrases</span> to join them together or toggle them on and off</dd>
                         </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
-                            <dt className="w-1/2 relative"><ReactSlider /></dt>
+                        <div className="flex flex-col gap-4 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
+                            <dt className="w-1/2"><ReactSlider /></dt>
                             <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">You can adjust time sliders but for now it will not affect the loop data</dd>
                         </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
+                        <div className="flex flex-col gap-4 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
                             <dt className="flex">
                                 <BackwardIcon className="w-8 h-8 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
                                 <ForwardIcon className="w-8 h-8 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
                             </dt>
                             <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Click the forward and back buttons to move between single phrases</dd>
                         </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
-                            <dt className="flex">
+                        <div className="flex flex-col gap-4 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
+                            <dt>
                                 <ArrowPathIcon className="w-8 h-8 p-1 bg-slate-900 rounded-xl text-white select-none" />
                             </dt>
                             <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Click reset to unjoin phrases</dd>
