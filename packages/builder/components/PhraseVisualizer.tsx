@@ -1,9 +1,10 @@
 import { useTuneBuilderStore } from "../store"
 import { useLooperStore } from "packages/looper/store"
 import clsx from 'clsx'
-export const PhraseVisualizer = () => {
+export const PhraseVisualizer = ({ zoomTrack, isZoomed }: { zoomTrack: (start: number, end: number) => void, isZoomed: boolean }) => {
     const { setSliderValues } = useLooperStore()
     const builder = useTuneBuilderStore()
+
     return (
         <div className="flex flex-col items-center">
             <div className="flex select-none flex-wrap">
@@ -16,6 +17,8 @@ export const PhraseVisualizer = () => {
                         onClick={() => {
                             builder.setSelectedPhrase(phrase.idx)
                             setSliderValues([phrase.startTime, phrase.endTime])
+                            if (!isZoomed) return
+                            zoomTrack(phrase.startTime, phrase.endTime)
                         }}>
                         <p>{phrase.idx + 1}</p>
                     </div>))}

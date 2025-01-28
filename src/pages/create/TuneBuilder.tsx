@@ -224,6 +224,9 @@ export default function CreateTune() {
         const currentEnd = prevEnd + prevDuration;
         createPhrase([prevEnd, currentEnd])
         setSliderValues([prevEnd, currentEnd])
+
+        if (!isZoomed) return
+        zoomTrack(prevEnd, currentEnd)
     }
 
 
@@ -265,7 +268,7 @@ export default function CreateTune() {
                                 <a onClick={yt.voidPlayPause} className="absolute top-0 left-0 w-full h-full z-10"></a>
                             </div>
                             <div className="justify-self-center w-full sm:w-1/2">
-                                <PhraseVisualizer />
+                                <PhraseVisualizer zoomTrack={zoomTrack} isZoomed={isZoomed} />
                             </div>
                             <div className="flex flex-col justify-center items-center gap-10 w-full sm:w-2/3 md:w-7/12 bg-slate-800 border-slate-900 border-2 p-8 rounded-3xl">
                                 <div className="w-full bg-slate-600 p-5 pb-8 rounded-3xl flex relative">
