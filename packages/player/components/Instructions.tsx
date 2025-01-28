@@ -2,11 +2,12 @@ import ArrowPathIcon from "@heroicons/react/16/solid/ArrowPathIcon";
 import BackwardIcon from "@heroicons/react/16/solid/BackwardIcon";
 import ForwardIcon from "@heroicons/react/16/solid/ForwardIcon";
 import PlayPauseIcon from "@heroicons/react/16/solid/PlayPauseIcon";
+import { LinkIcon } from "@heroicons/react/16/solid";
 import ReactSlider from "react-slider";
 const PhraseExample = () => (
-    <a className='border border-black p-2 text-white cursor-pointer'
+    <div className='border border-black p-2 text-white cursor-pointer'
     >0
-    </a>
+    </div>
 )
 export default function Instructions() {
     return (
@@ -18,7 +19,7 @@ export default function Instructions() {
                 <div className="mt-6 border-t border-white/10">
                     <dl className="divide-y divide-white/10">
                         <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
-                            <dt><textarea className="w-10 h-10 overflow-hidden"></textarea></dt>
+                            <dt><LinkIcon className="h-8 w-8 p-1 " /></dt>
                             <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Enter a link from the creator</dd>
                         </div>
                         <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">

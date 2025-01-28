@@ -166,8 +166,9 @@ export default function Player() {
             <Header />
 
             <div className="relative">
-                <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={pp.data.videoId} opts={playerOpts} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
-                <a onClick={handlePlayPauseClick} className="absolute top-0 left-0 w-full h-full z-10"></a>
+
+                <YouTube loading="lazy" id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={pp.data.videoId} opts={playerOpts} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
+                <button onClick={handlePlayPauseClick} className="absolute top-0 left-0 w-full h-full z-10"></button>
             </div>
             <div className="flex flex-col 2xl:flex-row items-center justify-center w-full sm:w-8/12 lg:w-1/2 relative px-3">
                 <PlayerPhraseVisualizer />
@@ -210,28 +211,28 @@ export default function Player() {
                     <SpeedDropDown speed={pp.speed} setSpeed={pp.setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
                 </div>
                 <div className="flex flex-col xs:flex-row gap-2 w-full justify-center items-center">
-                    <motion.a
+                    <motion.button
                         whileTap={{ scale: 0.9 }}
                         onClick={handleBackwardClick}>
                         <BackwardIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
-                    </motion.a>
-                    <motion.a
+                    </motion.button>
+                    <motion.button
                         whileTap={{ scale: 0.9 }}
                         onClick={handlePlayPauseClick}>
                         <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
-                    </motion.a>
-                    <motion.a
+                    </motion.button>
+                    <motion.button
                         whileTap={{ scale: 0.9 }}
                         onClick={handleNextClick}>
                         <ForwardIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
-                    </motion.a>
+                    </motion.button>
                 </div>
                 <div className="md:w-auto flex flex-col xs:flex-row justify-end items-end">
-                    <motion.a
+                    <motion.button
                         whileTap={{ scale: 0.9 }}
                         onClick={handlePhraseReset}>
                         <ArrowPathIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
-                    </motion.a>
+                    </motion.button>
                     <RestTimeDropDown restTime={pp.restTime} setRestTime={pp.setRestTime} />
                 </div>
             </div>

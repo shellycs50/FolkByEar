@@ -7,9 +7,9 @@ export const PhraseVisualizer = ({ zoomTrack, isZoomed }: { zoomTrack: (start: n
 
     return (
         <div className="flex flex-col items-center">
-            <div className="flex select-none flex-wrap">
+            <ol className="flex select-none flex-wrap">
                 {builder.phrases.map((phrase) => (
-                    <div key={phrase.idx} className=
+                    <li key={phrase.idx} className=
                         {clsx(
                             'border border-black p-2 m-2 text-white cursor-pointer h-9 w-9 overflow-hidden text-center flex justify-center items-center',
                             { 'bg-green-300': phrase.idx === builder.selectedPhraseIdx }
@@ -21,9 +21,9 @@ export const PhraseVisualizer = ({ zoomTrack, isZoomed }: { zoomTrack: (start: n
                             zoomTrack(phrase.startTime, phrase.endTime)
                         }}>
                         <p>{phrase.idx + 1}</p>
-                    </div>))}
+                    </li>))}
                 {builder.phrases.length === 0 && <div className="border border-black p-2 m-2 text-white">No phrases</div>}
-            </div>
+            </ol>
         </div>
     )
 }

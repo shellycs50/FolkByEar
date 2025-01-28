@@ -19,13 +19,15 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
     let getLatestState: (() => PlayerState) | (() => LoopState) | undefined
     let getRestTime: (() => PlayerState) | undefined
     let setIsPlaying: (isPlaying: boolean) => void
+    let setPlayerReady: (val: boolean) => void
     // this injection needs to be done better but for now it works
     if (intent === 'player') {
         ({
             setCurrentTime,
             setDuration,
             setSpeed,
-            setIsPlaying
+            setIsPlaying,
+            setPlayerReady
         } = pp)
         getLatestState = usePlayerStore.getState
         getRestTime = usePlayerStore.getState
@@ -36,7 +38,8 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
             setDuration,
             setSpeed,
             setTrackMax,
-            setIsPlaying
+            setIsPlaying,
+            setPlayerReady
         } = looper)
         getLatestState = useLooperStore.getState
     }
@@ -259,6 +262,7 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
         setSpeed(1)
         void updateDuration()
         handleResize()
+        setPlayerReady(true)
     }
 
     return { voidPlayPause, onStateChange, updateTime, updateDuration, setSize, initialSizes, handleResize, initialBuilderSizes, handleBuilderResize, onPlayerReady, voidSnapToLoop, voidChangeSpeed };

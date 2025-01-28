@@ -21,11 +21,7 @@ import { useRouter } from "next/router";
 import BuilderHeader from "packages/builder/components/BuilderHeader";
 import DangerDialog from "packages/misc/DangerDialog";
 import Header from "packages/header/Header";
-import Head from "next/head";
-import { usePlayerStore } from "packages/player/store";
 export default function CreateTune() {
-
-
     const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed, isPlaying } = useLooperStore();
     const yt = useYouTubePlayer('creator', null)
     const builder = useTuneBuilderStore()
@@ -254,7 +250,7 @@ export default function CreateTune() {
                             />
                         </div>
                         <p className="p-3 text-xs text-red-500">{validUrl === false && "Please enter a valid url"}</p>
-                        <a className="cursor-pointer self-end bg-slate-900 text-white p-3 rounded-2xl" onClick={() => submitUrl()}>Next</a>
+                        <button className="cursor-pointer self-end bg-slate-900 text-white p-3 rounded-2xl" onClick={() => submitUrl()}>Next</button>
                     </div>
                 </div>
             ) : (
@@ -264,8 +260,8 @@ export default function CreateTune() {
                         <div className="w-full flex flex-col items-center gap-5">
 
                             <div className="relative">
-                                <YouTube id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
-                                <a onClick={yt.voidPlayPause} className="absolute top-0 left-0 w-full h-full z-10"></a>
+                                <YouTube loading="lazy" id="yt" className=" bg-gray-600 p-4 rounded-xl" videoId={videoId} opts={playerOpts[0]} onReady={yt.onPlayerReady} onStateChange={yt.onStateChange} />
+                                <button onClick={yt.voidPlayPause} className="absolute top-0 left-0 w-full h-full z-10"></button>
                             </div>
                             <div className="justify-self-center w-full sm:w-1/2">
                                 <PhraseVisualizer zoomTrack={zoomTrack} isZoomed={isZoomed} />
@@ -313,32 +309,32 @@ export default function CreateTune() {
                                     </div>
 
                                     <div className="sm:absolute sm:-translate-x-1/2 sm:-translate-y-1/2 sm:top-1/2 sm:left-1/2 flex flex-row gap-3">
-                                        <motion.a
+                                        <motion.button
                                             whileTap={{ scale: 0.9 }}
                                             onClick={() => yt.voidPlayPause()} >
                                             <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" />
-                                        </motion.a>
+                                        </motion.button>
                                     </div>
                                     <div className="flex flex-row flex-wrap gap-3">
-                                        <motion.a
+                                        <motion.button
                                             whileTap={{ scale: 0.9 }}
                                             className={clsx(
                                                 'bg-slate-900 text-white p-3 rounded-2xl cursor-pointer',
                                                 { 'border-4 border-green-500': builder.phrases.length === 0 }
-                                            )} onClick={handleAddPhraseClick}><p className="select-none">Add Phrase</p></motion.a>
+                                            )} onClick={handleAddPhraseClick}><p className="select-none">Add Phrase</p></motion.button>
                                         {/* <RepeatDropDown /> */}
 
 
                                         {isZoomed ?
-                                            <motion.a
+                                            <motion.button
                                                 whileTap={{ scale: 0.9 }}
                                                 onClick={() => {
                                                     setIsZoomed(false)
                                                     unZoomTrack()
                                                 }}>
                                                 <MagnifyingGlassMinusIcon className="w-12 h-12 bg-slate-900 rounded-xl text-white cursor-pointer" />
-                                            </motion.a> :
-                                            <motion.a
+                                            </motion.button> :
+                                            <motion.button
                                                 whileTap={{ scale: 0.9 }}
                                                 onClick={() => {
                                                     setIsZoomed(true)
@@ -346,7 +342,7 @@ export default function CreateTune() {
                                                 }}>
                                                 <MagnifyingGlassPlusIcon className="w-12 h-12 bg-slate-900 rounded-xl text-white cursor-pointer" />
 
-                                            </motion.a>}
+                                            </motion.button>}
                                     </div>
                                 </div>
                             </div>

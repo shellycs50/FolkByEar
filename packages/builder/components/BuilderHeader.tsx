@@ -11,9 +11,9 @@ export default function BuilderHeader({ tryToLeave }: { tryToLeave: () => void }
             <div className="mt-4 md:mt-0 md:self-end md:absolute">
                 <motion.div
                     whileTap={{ scale: 0.9 }}>
-                    <a onClick={() => tryToLeave()} className="bg-slate-900 text-white p-3 m-3 rounded-2xl shadow-2xl cursor-pointer">
+                    <button onClick={() => tryToLeave()} className="bg-slate-900 text-white p-3 m-3 rounded-2xl shadow-2xl cursor-pointer">
                         Go to Player
-                    </a>
+                    </button>
                 </motion.div>
             </div>
         </div>

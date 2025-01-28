@@ -21,6 +21,8 @@ export interface LoopState {
   setTrackMax: (max: number) => void;
   isZoomed: boolean;
   setIsZoomed: (zoomed: boolean) => void;
+  playerReady: boolean;
+  setPlayerReady: (ready: boolean) => void;
 }
 
 export const useLooperStore = create<LoopState>((set) => ({
@@ -44,4 +46,6 @@ export const useLooperStore = create<LoopState>((set) => ({
   setTrackMax: (max) => set({ trackMax: max }),
   isZoomed: false,
   setIsZoomed: (zoomed) => set({ isZoomed: zoomed }),
+  playerReady: false,
+  setPlayerReady: (ready) => set({ playerReady: ready }),
 }));

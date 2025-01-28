@@ -33,6 +33,8 @@ export interface PlayerState {
   setRestTime: (restTime: number) => void;
   showGuide: boolean;
   setShowGuide: (val: boolean) => void;
+  playerReady: boolean;
+  setPlayerReady: (val: boolean) => void;
 }
 
 const generateArray = (arr: number[]) => {
@@ -62,7 +64,6 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   togglePhraseIdx: (idx) => {
     set((state) => {
       const arr = state.currentPhraseIdxs;
-
       if (arr.includes(idx)) {
         if (arr.length === 1) {
           return {};
@@ -177,4 +178,6 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   setData: (data: Data) => set({ data: data, hasStarted: false }),
   restTime: 0.5,
   setRestTime: (restTime) => set({ restTime: restTime }),
+  playerReady: false,
+  setPlayerReady: (val) => set({ playerReady: val }),
 }));
