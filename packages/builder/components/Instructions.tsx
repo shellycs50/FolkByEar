@@ -1,8 +1,8 @@
 import MagnifyingGlassPlusIcon from "@heroicons/react/16/solid/MagnifyingGlassPlusIcon";
 import ReactSlider from "react-slider";
 const PhraseExample = () => (
-    <div className='border border-black p-2 text-white cursor-pointer'
-    >1
+    <div className='border border-black p-2 text-white cursor-pointer w-10 h-10 flex items-center justify-center'>
+        0
     </div>
 )
 export default function Instructions() {
@@ -14,23 +14,23 @@ export default function Instructions() {
                 </div>
                 <div className="mt-6 border-t border-white/10">
                     <dl className="divide-y divide-white/10">
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
+                        <div className="flex flex-col gap-4 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
                             <dt className="w-1/2"><ReactSlider /></dt>
                             <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Move sliders to mark loop</dd>
                         </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
+                        <div className="flex flex-col gap-4 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
                             <dt>
-                                <div className='bg-slate-900 text-white px-2 py-3 rounded-2xl cursor-pointer text-xs'>Add Phrase</div>
+                                <div className='bg-slate-900 text-white p-1 rounded-2xl cursor-pointer text-xs text-center'>Add Phrase</div>
                             </dt>
                             <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Hit add phrase to add a new loop
                             </dd>
                         </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
+                        <div className="flex flex-col gap-4 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
                             <dt><MagnifyingGlassPlusIcon className="h-8 w-8" /></dt>
                             <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Use the magnifiying glass to fine tune your current loop</dd>
                         </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
-                            <dt className="w-1/2 relative"><PhraseExample /></dt>
+                        <div className="flex flex-col gap-4 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
+                            <dt><PhraseExample /></dt>
                             <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">
                                 Click a phrase to edit it</dd>
                         </div>
