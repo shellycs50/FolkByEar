@@ -22,6 +22,7 @@ import BuilderHeader from "packages/builder/components/BuilderHeader";
 import DangerDialog from "packages/misc/DangerDialog";
 import Header from "packages/header/Header";
 import Head from "next/head";
+import { usePlayerStore } from "packages/player/store";
 export default function CreateTune() {
 
 
@@ -207,6 +208,27 @@ export default function CreateTune() {
         }
     }, [])
 
+    const handleAddPhraseClick = () => {
+        const builder = useTuneBuilderStore.getState()
+        const prevStart =
+            builder.phrases[builder.phrases.length - 1]?.startTime ?? null;
+        const prevEnd = builder.phrases[builder.phrases.length - 1]?.endTime ?? null;
+
+        if (prevStart === null || prevEnd === null) {
+            createPhrase([0, 5])
+            setSliderValues([0, 5])
+            return
+        }
+
+        const prevDuration = prevEnd - prevStart;
+        const currentEnd = prevEnd + prevDuration;
+        createPhrase([prevEnd, currentEnd])
+        setSliderValues([prevEnd, currentEnd])
+
+        if (!isZoomed) return
+        zoomTrack(prevEnd, currentEnd)
+    }
+
 
     return (
         <>
@@ -246,7 +268,7 @@ export default function CreateTune() {
                                 <a onClick={yt.voidPlayPause} className="absolute top-0 left-0 w-full h-full z-10"></a>
                             </div>
                             <div className="justify-self-center w-full sm:w-1/2">
-                                <PhraseVisualizer />
+                                <PhraseVisualizer zoomTrack={zoomTrack} isZoomed={isZoomed} />
                             </div>
                             <div className="flex flex-col justify-center items-center gap-10 w-full sm:w-2/3 md:w-7/12 bg-slate-800 border-slate-900 border-2 p-8 rounded-3xl">
                                 <div className="w-full bg-slate-600 p-5 pb-8 rounded-3xl flex relative">
@@ -303,12 +325,7 @@ export default function CreateTune() {
                                             className={clsx(
                                                 'bg-slate-900 text-white p-3 rounded-2xl cursor-pointer',
                                                 { 'border-4 border-green-500': builder.phrases.length === 0 }
-                                            )} onClick={() => {
-                                                const start = phrases[phrases.length - 1]?.endTime ?? 0
-                                                setSliderValues([start, start + 5])
-                                                createPhrase()
-
-                                            }}><p className="select-none">Add Phrase</p></motion.a>
+                                            )} onClick={handleAddPhraseClick}><p className="select-none">Add Phrase</p></motion.a>
                                         {/* <RepeatDropDown /> */}
 
 

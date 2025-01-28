@@ -49,7 +49,7 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   setIsPlaying: (isPlaying) => set({ isPlaying: isPlaying }),
   showGuide: true,
   setShowGuide: (val) => set({ showGuide: val }),
-  sliderValues: [36.34, 40.69],
+  sliderValues: [16.788, 20.813],
   setSliderValues: (values) => set({ sliderValues: values }),
   currentTime: 0,
   setCurrentTime: (time) => set({ currentTime: time }),
