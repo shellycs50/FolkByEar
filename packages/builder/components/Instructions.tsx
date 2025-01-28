@@ -1,9 +1,9 @@
 import MagnifyingGlassPlusIcon from "@heroicons/react/16/solid/MagnifyingGlassPlusIcon";
 import ReactSlider from "react-slider";
 const PhraseExample = () => (
-    <a className='border border-black p-2 text-white cursor-pointer'
+    <div className='border border-black p-2 text-white cursor-pointer'
     >1
-    </a>
+    </div>
 )
 export default function Instructions() {
     return (
@@ -19,8 +19,9 @@ export default function Instructions() {
                             <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Move sliders to mark loop</dd>
                         </div>
                         <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
-                            <dt><a className=
-                                'bg-slate-900 text-white px-2 py-3 rounded-2xl cursor-pointer text-xs'>Add Phrase</a></dt>
+                            <dt>
+                                <div className='bg-slate-900 text-white px-2 py-3 rounded-2xl cursor-pointer text-xs'>Add Phrase</div>
+                            </dt>
                             <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Hit add phrase to add a new loop
                             </dd>
                         </div>
