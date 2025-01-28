@@ -47,14 +47,12 @@ export const getPlayerUrl = (builder: BuilderStoreState) => {
 };
 
 export const getBuilderUrl = (builder: BuilderStoreState) => {
-  console.log(" me trying to work");
   try {
     const jsonData = playerSchema.parse(builder);
     const jsonDataString = JSON.stringify(jsonData);
     const string = compressToEncodedURIComponent(jsonDataString);
     return `${baseUrl}/create?data=${string}`;
   } catch (e) {
-    console.log("faiaaiaialkure");
     console.error(e);
     return "";
   }
@@ -63,12 +61,9 @@ export const getBuilderUrl = (builder: BuilderStoreState) => {
 export const dataDecompress = (compressed: string) => {
   try {
     const jsonDataString = decompressFromEncodedURIComponent(compressed);
-    console.log({ jsonDataString });
     const validated = playerSchema.parse(JSON.parse(jsonDataString));
-    console.log("successfully parsed");
     return playerSchema.parse(validated);
   } catch (e) {
-    console.log("failed to parse");
     console.error(e);
     return null;
   }

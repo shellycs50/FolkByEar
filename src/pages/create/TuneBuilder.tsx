@@ -22,6 +22,7 @@ import BuilderHeader from "packages/builder/components/BuilderHeader";
 import DangerDialog from "packages/misc/DangerDialog";
 import Header from "packages/header/Header";
 import Head from "next/head";
+import { usePlayerStore } from "packages/player/store";
 export default function CreateTune() {
 
 
@@ -207,6 +208,24 @@ export default function CreateTune() {
         }
     }, [])
 
+    const handleAddPhraseClick = () => {
+        const builder = useTuneBuilderStore.getState()
+        const prevStart =
+            builder.phrases[builder.phrases.length - 1]?.startTime ?? null;
+        const prevEnd = builder.phrases[builder.phrases.length - 1]?.endTime ?? null;
+
+        if (prevStart === null || prevEnd === null) {
+            createPhrase([0, 5])
+            setSliderValues([0, 5])
+            return
+        }
+
+        const prevDuration = prevEnd - prevStart;
+        const currentEnd = prevEnd + prevDuration;
+        createPhrase([prevEnd, currentEnd])
+        setSliderValues([prevEnd, currentEnd])
+    }
+
 
     return (
         <>
@@ -303,12 +322,7 @@ export default function CreateTune() {
                                             className={clsx(
                                                 'bg-slate-900 text-white p-3 rounded-2xl cursor-pointer',
                                                 { 'border-4 border-green-500': builder.phrases.length === 0 }
-                                            )} onClick={() => {
-                                                const start = phrases[phrases.length - 1]?.endTime ?? 0
-                                                setSliderValues([start, start + 5])
-                                                createPhrase()
-
-                                            }}><p className="select-none">Add Phrase</p></motion.a>
+                                            )} onClick={handleAddPhraseClick}><p className="select-none">Add Phrase</p></motion.a>
                                         {/* <RepeatDropDown /> */}
 
 

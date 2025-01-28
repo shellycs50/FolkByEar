@@ -13,13 +13,14 @@ export interface phrase {
 //   repeatCount: 3,
 //   speed: 1,
 // } as phrase;
+type createPhraseArg = [number, number];
 
 export interface BuilderStoreState {
   videoId: string | null;
   setVideoId: (id: string) => void;
   phrases: phrase[];
   setPhrases: (phrases: phrase[]) => void;
-  createPhrase: () => void;
+  createPhrase: (vals: createPhraseArg) => void;
   deletePhrase: (idx: number) => void;
   selectedPhraseIdx: number;
   setSelectedPhrase: (idx: number) => void;
@@ -33,34 +34,15 @@ export const useTuneBuilderStore = create<BuilderStoreState>((set) => ({
   setVideoId: (id) => set({ videoId: id }),
   phrases: [{ idx: 0, startTime: 0, endTime: 5 }],
   setPhrases: (phrases) => set({ phrases: phrases }),
-  createPhrase: () =>
+  createPhrase: (vals) =>
     set((state) => {
-      const prevStart =
-        state.phrases[state.phrases.length - 1]?.startTime ?? null;
-      const prevEnd = state.phrases[state.phrases.length - 1]?.endTime ?? null;
-
-      if (prevStart === null || prevEnd === null) {
-        return {
-          phrases: [
-            ...state.phrases,
-            {
-              idx: state.phrases.length,
-              startTime: 0,
-              endTime: 5,
-            },
-          ],
-          selectedPhraseIdx: state.phrases.length ?? 0,
-        };
-      }
-      const prevDuration = prevEnd - prevStart;
-      const currentEnd = prevEnd + prevDuration;
       return {
         phrases: [
           ...state.phrases,
           {
             idx: state.phrases.length,
-            startTime: prevEnd,
-            endTime: currentEnd,
+            startTime: vals[0],
+            endTime: vals[1],
           },
         ],
         selectedPhraseIdx: state.phrases.length ?? 0,
