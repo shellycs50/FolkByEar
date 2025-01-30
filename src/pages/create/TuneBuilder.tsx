@@ -30,7 +30,7 @@ export default function CreateTune() {
     const { createPhrase } = builder
 
     const router = useRouter()
-    const removeQueryParams = async () => {
+    const removeGetParams = async () => {
         await router.push({
             pathname: router.pathname,
             query: {},
@@ -87,14 +87,16 @@ export default function CreateTune() {
 
 
     const [validUrl, setValidUrl] = React.useState<boolean | null>(null)
-    const submitUrl = () => {
-        const id = extractVideoId(userUrl)
+    const submitUrl = (url: string) => {
+        const id = extractVideoId(url)
         if (id) {
             setVideoId(id)
             builder.setVideoId(id)
             setValidUrl(true)
+            return true
         } else {
             setValidUrl(false)
+            return false
         }
     }
 
@@ -123,6 +125,7 @@ export default function CreateTune() {
         theme: "dark",
         transition: Bounce,
     });
+
 
     const playerUrl = React.useMemo(() => {
         if (!builder.videoId) return
@@ -188,9 +191,9 @@ export default function CreateTune() {
     // }, [builder]);
 
     React.useEffect(() => {
-        const q = router.query
-        if (typeof q.data === 'string' && q.data.length > 0) {
-            const res = dataDecompress(q.data)
+        const data = router.query.data
+        if (typeof data === 'string' && data.length > 0) {
+            const res = dataDecompress(data)
 
             if (res === null) return
 
@@ -199,11 +202,24 @@ export default function CreateTune() {
             setVideoId(res.videoId)
             setSliderValues([res.phrases[0]?.startTime ?? 0, res.phrases[0]?.endTime ?? 5])
             builder.setSelectedPhrase(0)
-            void removeQueryParams()
-
+            void removeGetParams()
         }
     }, [])
 
+    React.useEffect(() => {
+        const url = router.query.url
+        if (typeof url === 'string') {
+            setUserUrl(url)
+            if (!submitUrl(url)) {
+                setValidUrl(false)
+                void removeGetParams()
+                return
+            } else {
+                setValidUrl(true)
+                void removeGetParams()
+            }
+        }
+    }, [])
     const handleAddPhraseClick = () => {
         const builder = useTuneBuilderStore.getState()
         const prevStart =
@@ -250,7 +266,7 @@ export default function CreateTune() {
                             />
                         </div>
                         <p className="p-3 text-xs text-red-500">{validUrl === false && "Please enter a valid url"}</p>
-                        <button className="cursor-pointer self-end bg-slate-900 text-white p-3 rounded-2xl" onClick={() => submitUrl()}>Next</button>
+                        <button className="cursor-pointer self-end bg-slate-900 text-white p-3 rounded-2xl" onClick={() => submitUrl(userUrl)}>Next</button>
                     </div>
                 </div>
             ) : (
