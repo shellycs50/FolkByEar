@@ -2,47 +2,24 @@ import { useRef, useCallback, useMemo } from "react";
 import { type YouTubeEvent, type YouTubeProps } from "react-youtube";
 import type { YouTubePlayer } from 'youtube-player/dist/types'
 import type PlayerStates from "youtube-player/dist/constants/PlayerStates"
-import { type PlayerState, usePlayerStore } from "packages/player/store";
+import { type PlayerState } from "packages/player/store";
 import type { LoopState } from "./store";
-import { useLooperStore } from "./store";
-type UserIntent = 'player' | 'creator';
 type LoopCallback = (() => void) | null;
 
-
-export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
-    const pp = usePlayerStore()
-    const looper = useLooperStore()
-    let setCurrentTime: (time: number) => void
-    let setTrackMax: (max: number) => void | undefined
-    let setDuration: (duration: number) => void
-    let setSpeed: (speed: number) => void
-    let getLatestState: (() => PlayerState) | (() => LoopState) | undefined
-    let getRestTime: (() => PlayerState) | undefined
-    let setIsPlaying: (isPlaying: boolean) => void
-    let setPlayerReady: (val: boolean) => void
-    // this injection needs to be done better but for now it works
-    if (intent === 'player') {
-        ({
-            setCurrentTime,
-            setDuration,
-            setSpeed,
-            setIsPlaying,
-            setPlayerReady
-        } = pp)
-        getLatestState = usePlayerStore.getState
-        getRestTime = usePlayerStore.getState
-    }
-    else if (intent === 'creator') {
-        ({
-            setCurrentTime,
-            setDuration,
-            setSpeed,
-            setTrackMax,
-            setIsPlaying,
-            setPlayerReady
-        } = looper)
-        getLatestState = useLooperStore.getState
-    }
+type YTPlayerArgs = {
+    setCurrentTime: (time: number) => void
+    setDuration: (duration: number) => void
+    setSpeed: (speed: number) => void
+    getLatestState: (() => PlayerState) | (() => LoopState)
+    getRestTime: (() => PlayerState) | undefined
+    setIsPlaying: (isPlaying: boolean) => void
+    setPlayerReady: (val: boolean) => void
+    setTrackMax: ((max: number) => void) | undefined
+    onLoop: LoopCallback | undefined
+}
+// trackmax and onLoop are optional
+export const useYouTubePlayer = (args: YTPlayerArgs) => {
+    const { setCurrentTime, setTrackMax, setDuration, setSpeed, getLatestState, getRestTime, setIsPlaying, setPlayerReady, onLoop } = args
     const playerRef = useRef<YouTubePlayer | null>(null);
     const pollingRef = useRef<number | null>(null)
     // const pollingRef = useRef<NodeJS.Timeout | null>(null)
@@ -54,7 +31,7 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
     }, []);
 
     const snapToLoop = async (time: number) => {
-        const { sliderValues } = getLatestState!()
+        const { sliderValues } = getLatestState()
         let restTime = getRestTime?.().restTime
         if (restTime) restTime *= 1000
         if (!sliderValues || sliderValues[0] === 0 && sliderValues[1] === 0) return
@@ -62,7 +39,7 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
             if (time < sliderValues[0]!) {
                 await seekToTime(sliderValues[0]!)
             } else if (time > (sliderValues[1] ?? 0)) {
-                if (intent === 'player' && restTime) {
+                if (!!restTime) {
                     voidPlayPause()
                     setTimeout(voidPlayPause, restTime)
                 }
@@ -77,6 +54,16 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
     }
     const voidSnapToLoop = (time: number) => {
         void snapToLoop(time)
+    }
+
+    const resetToBeginningOfLoop = async () => {
+        const { sliderValues } = getLatestState()
+        if (!sliderValues) return
+        await seekToTime(sliderValues[0]!)
+    }
+
+    const voidResetToBeginningOfLoop = () => {
+        void resetToBeginningOfLoop()
     }
 
 
@@ -265,5 +252,5 @@ export const useYouTubePlayer = (intent: UserIntent, onLoop: LoopCallback) => {
         setPlayerReady(true)
     }
 
-    return { voidPlayPause, onStateChange, updateTime, updateDuration, setSize, initialSizes, handleResize, initialBuilderSizes, handleBuilderResize, onPlayerReady, voidSnapToLoop, voidChangeSpeed };
+    return { voidResetToBeginningOfLoop, voidPlayPause, onStateChange, updateTime, updateDuration, setSize, initialSizes, handleResize, initialBuilderSizes, handleBuilderResize, onPlayerReady, voidSnapToLoop, voidChangeSpeed };
 };

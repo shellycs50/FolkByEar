@@ -11,6 +11,8 @@ type Data = {
 };
 
 export interface PlayerState {
+  linkMode: boolean;
+  setLinkMode: (linkMode: boolean) => void;
   isPlaying: boolean;
   setIsPlaying: (isPlaying: boolean) => void;
   sliderValues: number[];
@@ -46,7 +48,10 @@ const generateArray = (arr: number[]) => {
   }
   return output;
 };
+
 export const usePlayerStore = create<PlayerState>((set) => ({
+  linkMode: false,
+  setLinkMode: (linkMode) => set({ linkMode: linkMode }),
   isPlaying: false,
   setIsPlaying: (isPlaying) => set({ isPlaying: isPlaying }),
   showGuide: true,

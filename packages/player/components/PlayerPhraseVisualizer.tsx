@@ -1,10 +1,9 @@
 import { usePlayerStore } from "../store";
 import clsx from "clsx";
-import { useYouTubePlayer } from "packages/looper/useYoutubePlayer";
 import React from "react";
-export const PlayerPhraseVisualizer = () => {
+import { MdJoinInner } from "react-icons/md";
+export const PlayerPhraseVisualizer = ({ yt }: { yt }) => {
     const { data, ...pp } = usePlayerStore();
-    const yt = useYouTubePlayer("player", null);
 
     const calculateSliderValues = () => {
         // costing client compute to make ts happy
@@ -20,9 +19,30 @@ export const PlayerPhraseVisualizer = () => {
         if (startTime === undefined || endTime === undefined) return;
         return [startTime, endTime];
     };
+    const handlePhraseReset = () => {
+        const latest = usePlayerStore.getState()
+        const currentPhraseIdx = latest.currentPhraseIdxs[0]
+        if (typeof currentPhraseIdx === 'undefined') return
+        pp.setCurrentPhraseIdxs([currentPhraseIdx])
+        const sliderValues = calculateSliderValues()
+        if (sliderValues) pp.setSliderValues(sliderValues)
+    }
+
+    const handlePhraseResetClick = () => {
+        const linked = pp.linkMode
+        if (linked) {
+            handlePhraseReset()
+            pp.setLinkMode(false)
+        } else {
+            pp.setLinkMode(true)
+        }
+    }
     return (
         <div className="flex flex-col items-center">
-            <ol className="flex select-none flex-wrap">
+            <ol className="flex select-none flex-wrap items-center">
+                <button onClick={handlePhraseResetClick}>
+                    <MdJoinInner className={clsx({ "h-9 w-9": true, "text-slate-900": pp.linkMode, "text-green-500": !pp.linkMode })} />
+                </button>
                 {data.phrases.map((phrase) => (
                     <li
                         key={phrase.idx}

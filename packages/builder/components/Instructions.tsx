@@ -1,3 +1,4 @@
+import { ArrowUturnLeftIcon } from "@heroicons/react/16/solid";
 import MagnifyingGlassPlusIcon from "@heroicons/react/16/solid/MagnifyingGlassPlusIcon";
 import ReactSlider from "react-slider";
 const PhraseExample = () => (
@@ -33,6 +34,11 @@ export default function Instructions() {
                             <dt><PhraseExample /></dt>
                             <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">
                                 Click a phrase to edit it</dd>
+                        </div>
+                        <div className="flex flex-col gap-4 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
+                            <dt><ArrowUturnLeftIcon className="h-8 w-8" /></dt>
+                            <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">
+                                Click reset to snap to the start of the current loop</dd>
                         </div>
 
 
