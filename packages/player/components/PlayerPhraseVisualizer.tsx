@@ -1,8 +1,11 @@
-import { usePlayerStore } from "../store";
+import { PlayerState, usePlayerStore } from "../store";
 import clsx from "clsx";
+import { YTPlayerNoResize } from "packages/looper/useYoutubePlayer";
 import React from "react";
 import { MdJoinInner } from "react-icons/md";
-export const PlayerPhraseVisualizer = ({ yt }: { yt }) => {
+export const PlayerPhraseVisualizer = ({ yt }: { yt: YTPlayerNoResize }) => {
+
+
     const { data, ...pp } = usePlayerStore();
 
     const calculateSliderValues = () => {
@@ -41,7 +44,7 @@ export const PlayerPhraseVisualizer = ({ yt }: { yt }) => {
         <div className="flex flex-col items-center">
             <ol className="flex select-none flex-wrap items-center">
                 <button onClick={handlePhraseResetClick}>
-                    <MdJoinInner className={clsx({ "h-9 w-9": true, "text-slate-900": pp.linkMode, "text-green-500": !pp.linkMode })} />
+                    <MdJoinInner className={clsx({ "h-9 w-9": true, "text-green-500": pp.linkMode, "text-slate-900": !pp.linkMode })} />
                 </button>
                 {data.phrases.map((phrase) => (
                     <li
@@ -54,13 +57,19 @@ export const PlayerPhraseVisualizer = ({ yt }: { yt }) => {
                         <button
                             key={phrase.idx}
 
-                            onClick={() => {
-                                pp.togglePhraseIdx(phrase.idx);
-                                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                            onMouseDown={() => {
+                                if (pp.linkMode) {
+                                    pp.togglePhraseIdx(phrase.idx);
+                                } else {
+                                    pp.setCurrentPhraseIdxs([phrase.idx]);
+                                }
+
                                 const sliderValues = calculateSliderValues();
                                 if (sliderValues) pp.setSliderValues(sliderValues);
                                 void yt.updateTime();
                             }}
+
+
                         >
                             <p>{phrase.idx + 1}</p>
                         </button>

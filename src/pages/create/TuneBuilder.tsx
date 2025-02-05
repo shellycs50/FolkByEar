@@ -1,5 +1,5 @@
 
-import React, { use, useCallback } from "react";
+import React, { useCallback } from "react";
 import { extractVideoId, fmtMSS } from "packages/looper/helpers";
 import YouTube from 'react-youtube'
 import ReactSlider from "react-slider";

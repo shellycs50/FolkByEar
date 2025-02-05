@@ -8,9 +8,19 @@ import { useLooperStore } from "packages/looper/store";
 import { useYouTubePlayer } from "packages/looper/useYoutubePlayer";
 export default function Looper() {
 
-    const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed } = useLooperStore();
+    const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed, setIsPlaying, setPlayerReady } = useLooperStore();
 
-    const yt = useYouTubePlayer('creator', null)
+    const yt = useYouTubePlayer({
+        setCurrentTime,
+        setDuration,
+        setSpeed,
+        setTrackMax,
+        getLatestState: useLooperStore.getState,
+        getRestTime: undefined,
+        setIsPlaying,
+        setPlayerReady,
+        onLoop: undefined
+    });
 
     const playerOpts = React.useState({
         height: yt.initialSizes[1],

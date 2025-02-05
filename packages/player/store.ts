@@ -67,28 +67,28 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   currentPhraseIdxs: [0],
   setCurrentPhraseIdxs: (arr) => set({ currentPhraseIdxs: arr }),
   togglePhraseIdx: (idx) => {
+    // console.log("togglePhraseIdx", idx);
     set((state) => {
       const arr = state.currentPhraseIdxs;
       if (arr.includes(idx)) {
         if (arr.length === 1) {
-          return {};
+          return state;
         }
         const filtered = arr.filter((i) => i !== idx);
         const output = generateArray(filtered);
         return { currentPhraseIdxs: output };
       } else {
         const output = generateArray([...arr, idx]);
-        if (!output?.length) return {};
+        if (!output?.length) return state;
         const firstEntryIndex = output[0] ?? 0;
         const lastEntryIndex = output[output.length - 1] ?? 0;
         //note data is constant / immutable
-        const newSliderValues = [
-          state.data.phrases[firstEntryIndex]?.startTime ?? 0,
-          state.data.phrases[lastEntryIndex]?.endTime ?? 0,
-        ];
+        // const newSliderValues = [
+        //   state.data.phrases[firstEntryIndex]?.startTime ?? 0,
+        //   state.data.phrases[lastEntryIndex]?.endTime ?? 0,
+        // ];
         return {
           currentPhraseIdxs: output,
-          sliderValues: newSliderValues,
         };
       }
     });

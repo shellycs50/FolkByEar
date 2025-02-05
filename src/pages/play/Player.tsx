@@ -1,5 +1,5 @@
 import YouTube from "react-youtube"
-import { useYouTubePlayer } from "packages/looper/useYoutubePlayer"
+import { useYouTubePlayer, YTPlayerNoResize } from "packages/looper/useYoutubePlayer"
 import React, { useEffect } from "react"
 import PlayPauseIcon from "@heroicons/react/16/solid/PlayPauseIcon"
 import { ForwardIcon } from "@heroicons/react/16/solid"
@@ -101,6 +101,7 @@ export default function Player() {
     // }
 
     // const onLoop = debounce(onLoopCore, 500) // debounce is a hacky way to stop multiple calls
+
     const { handleResize, ...yt } = useYouTubePlayer({
         setCurrentTime,
         setTrackMax: undefined,
@@ -138,9 +139,32 @@ export default function Player() {
 
     const handleNextClick = () => {
         const latest = getLatestPlayerState()
-        if (latest.currentPhraseIdxs.length !== 1) {
-            setCurrentPhraseIdxs([latest.currentPhraseIdxs[0]!])
-            handleNextClick()
+        if (latest.linkMode) {
+            const staticCurrentTime = currentTime
+            const current = data.phrases.find((phrase) => {
+                if (phrase.startTime <= staticCurrentTime && phrase.endTime >= staticCurrentTime) {
+                    const [startlog, endlog] = [phrase.startTime, phrase.endTime]
+                    console.log({ startlog, endlog, staticCurrentTime })
+                    return true
+                }
+            })
+            if (current) {
+                const nextIdx = latest.currentPhraseIdxs.find((idx) => idx === current.idx + 1)
+                console.log(nextIdx, current.idx)
+                if (typeof nextIdx === 'undefined') {
+                    const startIdx = latest.currentPhraseIdxs[0]!
+                    const startTime = latest.data.phrases[startIdx]!.startTime
+                    yt.voidSeekToTime(startTime)
+                    return
+                }
+                const next = data.phrases[nextIdx]
+                if (typeof next === 'undefined') {
+                    yt.voidSeekToTime(data.phrases[0]!.startTime)
+                    return
+                }
+                yt.voidSeekToTime(next.startTime)
+                return
+            }
         }
         const currentPhraseIdx = latest.currentPhraseIdxs[0]
         if (typeof currentPhraseIdx === 'undefined') return
@@ -158,18 +182,18 @@ export default function Player() {
 
     const handleBackwardClick = () => {
         const latest = getLatestPlayerState()
-        if (latest.currentPhraseIdxs.length !== 1) {
+        if (latest.linkMode) {
             const staticCurrentTime = currentTime
             const current = data.phrases.find((phrase, idx) => {
                 if (phrase.startTime <= staticCurrentTime && phrase.endTime >= staticCurrentTime) {
-                    return idx
+                    const [startlog, endlog] = [phrase.startTime, phrase.endTime]
+                    console.log({ startlog, endlog, staticCurrentTime })
+                    return true
                 }
             })
             if (current) {
-                const nextIdx = (current.idx + 1) % data.phrases.length
-                const next = data.phrases[nextIdx]
-                if (!next) return
-                setSliderValues([next.startTime, next.endTime])
+                console.log(current)
+                yt.voidSeekToTime(current.startTime)
             }
 
             return
@@ -187,13 +211,14 @@ export default function Player() {
         }
     }
 
-    const handlePhraseReset = () => {
+    const handleUTurnClick = () => {
         const latest = getLatestPlayerState()
         const currentPhraseIdx = latest.currentPhraseIdxs[0]
         if (typeof currentPhraseIdx === 'undefined') return
-        setCurrentPhraseIdxs([currentPhraseIdx])
-        const sliderValues = calculateSliderValues()
-        if (sliderValues) setSliderValues(sliderValues)
+        const time = data.phrases[currentPhraseIdx]?.startTime
+        if (typeof time === 'undefined') return
+        yt.voidSeekToTime(time)
+
     }
 
     // playerOpts doesnt need to be state
@@ -258,7 +283,6 @@ export default function Player() {
                         className="absolute top-5 border-l-0 border-r-2 z-30 h-3"
                         style={{
                             width: `${((currentTime / (duration * 1.04)) * 1000)}%`,
-                            // transition: 'width 0.1s linear', // Smooth animation
                         }}
                     ></div>
                 )}
@@ -289,7 +313,7 @@ export default function Player() {
                 <div className="md:w-auto flex flex-col xs:flex-row justify-end items-end">
                     <motion.button
                         whileTap={{ scale: 0.9 }}
-                        onClick={handlePhraseReset}>
+                        onClick={handleUTurnClick}>
                         <ArrowUturnLeftIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer select-none" />
                     </motion.button>
                     <RestTimeDropDown restTime={restTime} setRestTime={setRestTime} />
