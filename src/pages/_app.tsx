@@ -27,6 +27,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <link rel="canonical" href="https://looplab-beta.vercel.app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
       <SessionProvider session={session}>
         <div className="bg-slate-700">
           <div className={GeistSans.className}>

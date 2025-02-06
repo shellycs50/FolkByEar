@@ -4,6 +4,7 @@ import type { YouTubePlayer } from "youtube-player/dist/types";
 import type PlayerStates from "youtube-player/dist/constants/PlayerStates";
 import { type PlayerState } from "packages/player/store";
 import type { LoopState } from "./store";
+import throttle from "lodash.throttle";
 type LoopCallback = (() => void) | null;
 
 type YTPlayerArgs = {
@@ -156,8 +157,11 @@ export const useYouTubePlayer = (args: YTPlayerArgs) => {
         if (!playerRef.current) return;
         const time: number = await playerRef.current.getCurrentTime();
         voidSnapToLoop(time);
-        setCurrentTime(time);
+        throttledSetCurrentTime(time);
     };
+
+
+    const throttledSetCurrentTime = throttle((time: number) => setCurrentTime(time), 500);
 
     const updateDuration = async () => {
         if (!playerRef.current) return;
