@@ -4,12 +4,7 @@ import {
 } from "lz-string";
 import z from "zod";
 import { type BuilderStoreState } from "packages/builder/store";
-// Define the type for the JSON data
-interface Phrase {
-  idx: number;
-  startTime: number;
-  endTime: number;
-}
+import { Phrase } from "packages/builder/store";
 
 interface JsonData {
   videoId: string;
@@ -34,9 +29,9 @@ const baseUrl =
     ? "http://localhost:3000"
     : "https://looplab-beta.vercel.app";
 
-export const getPlayerUrl = (builder: BuilderStoreState) => {
+export const getPlayerUrl = (data: JsonData) => {
   try {
-    const jsonData = playerSchema.parse(builder);
+    const jsonData = playerSchema.parse(data);
     const jsonDataString = JSON.stringify(jsonData);
     const string = compressToEncodedURIComponent(jsonDataString);
     return `${baseUrl}/play?data=${string}`;
@@ -46,9 +41,9 @@ export const getPlayerUrl = (builder: BuilderStoreState) => {
   }
 };
 
-export const getBuilderUrl = (builder: BuilderStoreState) => {
+export const getBuilderUrl = (data: JsonData) => {
   try {
-    const jsonData = playerSchema.parse(builder);
+    const jsonData = playerSchema.parse(data);
     const jsonDataString = JSON.stringify(jsonData);
     const string = compressToEncodedURIComponent(jsonDataString);
     return `${baseUrl}/create?data=${string}`;

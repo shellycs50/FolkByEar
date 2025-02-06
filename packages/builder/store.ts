@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export interface phrase {
+export interface Phrase {
   idx: number;
   startTime: number;
   endTime: number;
@@ -18,8 +18,8 @@ type createPhraseArg = [number, number];
 export interface BuilderStoreState {
   videoId: string | null;
   setVideoId: (id: string) => void;
-  phrases: phrase[];
-  setPhrases: (phrases: phrase[]) => void;
+  phrases: Phrase[];
+  setPhrases: (phrases: Phrase[]) => void;
   createPhrase: (vals: createPhraseArg) => void;
   deletePhrase: (idx: number) => void;
   selectedPhraseIdx: number;

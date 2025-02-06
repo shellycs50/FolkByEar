@@ -1,5 +1,5 @@
 
-import React, { use, useCallback } from "react";
+import React, { useCallback } from "react";
 import { extractVideoId, fmtMSS } from "packages/looper/helpers";
 import YouTube from 'react-youtube'
 import ReactSlider from "react-slider";
@@ -21,13 +21,54 @@ import { useRouter } from "next/router";
 import BuilderHeader from "packages/builder/components/BuilderHeader";
 import DangerDialog from "packages/misc/DangerDialog";
 import Header from "packages/header/Header";
+import { ArrowUturnLeftIcon } from "@heroicons/react/16/solid"
 export default function CreateTune() {
-    const { sliderValues, setSliderValues, trackMin, setTrackMin, trackMax, setTrackMax, userUrl, setUserUrl, videoId, setVideoId, currentTime, setCurrentTime, duration, setDuration, speed, setSpeed, isZoomed, setIsZoomed, isPlaying } = useLooperStore();
-    const yt = useYouTubePlayer('creator', null)
-    const builder = useTuneBuilderStore()
-    const reset = builder.reset
-    const { phrases } = builder
-    const { createPhrase } = builder
+    const sliderValues = useLooperStore((state) => state.sliderValues);
+    const setSliderValues = useLooperStore((state) => state.setSliderValues);
+    const trackMin = useLooperStore((state) => state.trackMin);
+    const setTrackMin = useLooperStore((state) => state.setTrackMin);
+    const trackMax = useLooperStore((state) => state.trackMax);
+    const setTrackMax = useLooperStore((state) => state.setTrackMax);
+    const userUrl = useLooperStore((state) => state.userUrl);
+    const setUserUrl = useLooperStore((state) => state.setUserUrl);
+    const videoId = useLooperStore((state) => state.videoId);
+    const setVideoId = useLooperStore((state) => state.setVideoId);
+    const currentTime = useLooperStore((state) => state.currentTime);
+    const setCurrentTime = useLooperStore((state) => state.setCurrentTime);
+    const duration = useLooperStore((state) => state.duration);
+    const setDuration = useLooperStore((state) => state.setDuration);
+    const speed = useLooperStore((state) => state.speed);
+    const setSpeed = useLooperStore((state) => state.setSpeed);
+    const isZoomed = useLooperStore((state) => state.isZoomed);
+    const setIsZoomed = useLooperStore((state) => state.setIsZoomed);
+    const isPlaying = useLooperStore((state) => state.isPlaying);
+    const setIsPlaying = useLooperStore((state) => state.setIsPlaying);
+    const setPlayerReady = useLooperStore((state) => state.setPlayerReady);
+
+    const selectedPhraseIdx = useTuneBuilderStore((state) => state.selectedPhraseIdx);
+    const setSelectedPhrase = useTuneBuilderStore((state) => state.setSelectedPhrase);
+    const builderVideoId = useTuneBuilderStore((state) => state.videoId);
+    const setBuilderVideoId = useTuneBuilderStore((state) => state.setVideoId);
+    const phrases = useTuneBuilderStore((state) => state.phrases);
+    const setPhrases = useTuneBuilderStore((state) => state.setPhrases);
+    const createPhrase = useTuneBuilderStore((state) => state.createPhrase);
+    // const deletePhrase = useTuneBuilderStore((state) => state.deletePhrase);
+    const reset = useTuneBuilderStore((state) => state.reset);
+
+
+
+    const yt = useYouTubePlayer({
+        setCurrentTime,
+        setTrackMax,
+        setDuration,
+        setSpeed,
+        getLatestState: useLooperStore.getState,
+        getRestTime: undefined,
+        setIsPlaying,
+        setPlayerReady,
+        onLoop: undefined
+    })
+
 
     const router = useRouter()
     const removeGetParams = async () => {
@@ -91,7 +132,7 @@ export default function CreateTune() {
         const id = extractVideoId(url)
         if (id) {
             setVideoId(id)
-            builder.setVideoId(id)
+            setBuilderVideoId(id)
             setValidUrl(true)
             return true
         } else {
@@ -101,12 +142,12 @@ export default function CreateTune() {
     }
 
     const updatePhrases = useCallback((sliderValues: number[] = [0, duration]) => {
-        if (!phrases[builder.selectedPhraseIdx]) return
+        if (!phrases[selectedPhraseIdx]) return
         const newPhrases = [...phrases]
-        newPhrases[builder.selectedPhraseIdx]!.startTime = sliderValues[0]!
-        newPhrases[builder.selectedPhraseIdx]!.endTime = sliderValues[1]!
-        builder.setPhrases(newPhrases)
-    }, [builder, duration, phrases])
+        newPhrases[selectedPhraseIdx]!.startTime = sliderValues[0]!
+        newPhrases[selectedPhraseIdx]!.endTime = sliderValues[1]!
+        setPhrases(newPhrases)
+    }, [duration, phrases, selectedPhraseIdx, setPhrases])
 
     const playheadPercentage = React.useMemo(() => {
         const top = currentTime - trackMin
@@ -128,14 +169,14 @@ export default function CreateTune() {
 
 
     const playerUrl = React.useMemo(() => {
-        if (!builder.videoId) return
-        return getPlayerUrl(builder)
-    }, [builder])
+        if (!builderVideoId) return
+        return getPlayerUrl({ videoId: builderVideoId, phrases: phrases })
+    }, [builderVideoId, phrases])
 
     const builderUrl = React.useMemo(() => {
-        if (!builder.videoId) return
-        return getBuilderUrl(builder)
-    }, [builder])
+        if (!builderVideoId) return
+        return getBuilderUrl({ videoId: builderVideoId, phrases: phrases })
+    }, [builderVideoId, phrases])
 
 
     // danger dialog 
@@ -197,19 +238,20 @@ export default function CreateTune() {
 
             if (res === null) return
 
-            builder.setPhrases(res.phrases)
-            builder.setVideoId(res.videoId)
+            setPhrases(res.phrases)
+            setVideoId(res.videoId)
             setVideoId(res.videoId)
             setSliderValues([res.phrases[0]?.startTime ?? 0, res.phrases[0]?.endTime ?? 5])
-            builder.setSelectedPhrase(0)
+            setSelectedPhrase(0)
             void removeGetParams()
         }
-    }, [])
+    }, [router.query])
 
     React.useEffect(() => {
         const url = router.query.url
         if (typeof url === 'string') {
             setUserUrl(url)
+            // calling submitUrl will set videoId state automatically if url is valid.
             if (!submitUrl(url)) {
                 setValidUrl(false)
                 void removeGetParams()
@@ -219,7 +261,8 @@ export default function CreateTune() {
                 void removeGetParams()
             }
         }
-    }, [])
+    }, [router.query])
+
     const handleAddPhraseClick = () => {
         const builder = useTuneBuilderStore.getState()
         const prevStart =
@@ -244,7 +287,7 @@ export default function CreateTune() {
 
     return (
         <>
-            {!builder.videoId ? (
+            {!builderVideoId ? (
                 <div className="flex flex-col items-center justify-start h-screen">
                     <Header />
                     <div className="bg-slate-900 text-white border-slate-900 border-2 p-5 rounded-lg w-11/12 sm:w-1/2 md:w-1/2 flex flex-col items-center">
@@ -324,11 +367,17 @@ export default function CreateTune() {
                                         <SpeedDropDown speed={speed} setSpeed={setSpeed} voidChangeSpeed={yt.voidChangeSpeed} />
                                     </div>
 
-                                    <div className="sm:absolute sm:-translate-x-1/2 sm:-translate-y-1/2 sm:top-1/2 sm:left-1/2 flex flex-row gap-3">
+                                    <div className="lg:absolute lg:-translate-x-1/2 lg:-translate-y-1/2 lg:top-1/2 sm:left-1/2 flex flex-row gap-3">
                                         <motion.button
                                             whileTap={{ scale: 0.9 }}
                                             onClick={() => yt.voidPlayPause()} >
                                             <PlayPauseIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" />
+                                        </motion.button>
+
+                                        <motion.button
+                                            whileTap={{ scale: 0.9 }}
+                                            onClick={() => yt.voidResetToBeginningOfLoop()} >
+                                            <ArrowUturnLeftIcon className="w-12 h-12 p-1 bg-slate-900 rounded-xl text-white cursor-pointer" />
                                         </motion.button>
                                     </div>
                                     <div className="flex flex-row flex-wrap gap-3">
@@ -336,7 +385,7 @@ export default function CreateTune() {
                                             whileTap={{ scale: 0.9 }}
                                             className={clsx(
                                                 'bg-slate-900 text-white p-3 rounded-2xl cursor-pointer',
-                                                { 'border-4 border-green-500': builder.phrases.length === 0 }
+                                                { 'border-4 border-green-500': phrases.length === 0 }
                                             )} onClick={handleAddPhraseClick}><p className="select-none">Add Phrase</p></motion.button>
                                         {/* <RepeatDropDown /> */}
 
