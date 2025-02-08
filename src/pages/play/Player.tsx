@@ -1,7 +1,5 @@
 import YouTube from "react-youtube";
-import {
-    useYouTubePlayer,
-} from "packages/looper/useYoutubePlayer";
+import { useYouTubePlayer } from "packages/looper/useYoutubePlayer";
 import React, { useCallback, useEffect } from "react";
 import PlayPauseIcon from "@heroicons/react/16/solid/PlayPauseIcon";
 import { ForwardIcon } from "@heroicons/react/16/solid";
@@ -22,12 +20,9 @@ import Header from "packages/header/Header";
 import PlayerSlider from "packages/player/components/PlayerSlider";
 
 export default function Player() {
-
     const setIsPlaying = usePlayerStore((state) => state.setIsPlaying);
 
-
     const setSliderValues = usePlayerStore((state) => state.setSliderValues);
-
 
     const setCurrentTime = usePlayerStore((state) => state.setCurrentTime);
 
@@ -115,24 +110,26 @@ export default function Player() {
 
     // const onLoop = debounce(onLoopCore, 500) // debounce is a hacky way to stop multiple calls
 
-    const { voidSeekToTime,
+    const {
+        voidSeekToTime,
         voidPlayPause,
         onStateChange,
         handleResize,
         initialBuilderSizes,
         onPlayerReady,
         voidChangeSpeed,
-        updateTime } = useYouTubePlayer({
-            setCurrentTime,
-            setTrackMax: undefined,
-            setDuration,
-            setSpeed,
-            getLatestState: usePlayerStore.getState,
-            getRestTime: undefined,
-            setIsPlaying,
-            setPlayerReady,
-            onLoop: undefined,
-        });
+        updateTime,
+    } = useYouTubePlayer({
+        setCurrentTime,
+        setTrackMax: undefined,
+        setDuration,
+        setSpeed,
+        getLatestState: usePlayerStore.getState,
+        getRestTime: undefined,
+        setIsPlaying,
+        setPlayerReady,
+        onLoop: undefined,
+    });
 
     const calculateSliderValues = () => {
         // costing client compute to make ts happy
@@ -206,7 +203,14 @@ export default function Player() {
                 latest.data.phrases[0]?.endTime ?? 5,
             ]);
         }
-    }, [calculateSliderValues, data.phrases, getLatestPlayerState, setCurrentPhraseIdxs, setSliderValues, voidSeekToTime]);
+    }, [
+        calculateSliderValues,
+        data.phrases,
+        getLatestPlayerState,
+        setCurrentPhraseIdxs,
+        setSliderValues,
+        voidSeekToTime,
+    ]);
 
     const handleBackwardClick = useCallback(() => {
         const latest = getLatestPlayerState();
@@ -242,7 +246,14 @@ export default function Player() {
                 latest.data.phrases[latest.data.phrases.length - 1]?.endTime ?? 5,
             ]);
         }
-    }, [calculateSliderValues, data.phrases, getLatestPlayerState, setCurrentPhraseIdxs, setSliderValues, voidSeekToTime]);
+    }, [
+        calculateSliderValues,
+        data.phrases,
+        getLatestPlayerState,
+        setCurrentPhraseIdxs,
+        setSliderValues,
+        voidSeekToTime,
+    ]);
 
     const handleUTurnClick = useCallback(() => {
         const latest = getLatestPlayerState();
@@ -264,7 +275,6 @@ export default function Player() {
         // },
     });
 
-
     React.useEffect(() => {
         if (typeof window === "undefined") return;
         window.addEventListener("resize", debounce(handleResize, 500));
@@ -279,10 +289,10 @@ export default function Player() {
     //     const setSliderValues = usePlayerStore((state) => state.setSliderValues);
 
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center gap-5 pb-20">
+        <div className="flex min-h-screen w-full flex-col items-center justify-start gap-5 pb-20">
             <Header />
 
-            <div className="relative">
+            <div className="relative select-none">
                 <YouTube
                     loading="lazy"
                     id="yt"
@@ -294,7 +304,7 @@ export default function Player() {
                 />
                 <button
                     onClick={handlePlayPauseClick}
-                    className="absolute left-0 top-0 z-10 h-full w-full"
+                    className="absolute left-0 top-0 z-10 h-full w-full select-none"
                 ></button>
             </div>
             <div className="relative flex w-full flex-col items-center justify-center px-3 sm:w-8/12 lg:w-1/2 2xl:flex-row">
@@ -346,6 +356,7 @@ export default function Player() {
             <div className="top-1 block 2xl:fixed 2xl:left-0">
                 <Instructions />
             </div>
+
         </div>
     );
 }

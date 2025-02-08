@@ -1,7 +1,7 @@
 import { PlayerState, usePlayerStore } from "../store";
 import clsx from "clsx";
 import { YTPlayerNoResize } from "packages/looper/useYoutubePlayer";
-import React from "react";
+import React, { useCallback } from "react";
 import { useMemo } from "react";
 import { MdJoinInner } from "react-icons/md";
 import throttle from "lodash.throttle";
@@ -33,7 +33,7 @@ export const PlayerPhraseVisualizer = React.memo(({
     setSliderValues,
 }: PlayerPhraseVisualizerProps) => {
 
-    const calculateSliderValues = (): [number, number] | undefined => {
+    const calculateSliderValues = useCallback((): [number, number] | undefined => {
         // costing client compute to make ts happy
         const { currentPhraseIdxs } = usePlayerStore.getState();
         if (!Array.isArray(currentPhraseIdxs) || currentPhraseIdxs.length === 0)
@@ -46,7 +46,7 @@ export const PlayerPhraseVisualizer = React.memo(({
         const endTime = data.phrases[endIdx]?.endTime;
         if (startTime === undefined || endTime === undefined) return;
         return [startTime, endTime];
-    };
+    }, [data.phrases]);
 
     const handlePhraseReset = () => {
         const latest = usePlayerStore.getState();
@@ -72,7 +72,7 @@ export const PlayerPhraseVisualizer = React.memo(({
         <div className="flex flex-col items-center">
             <ol className="flex select-none flex-wrap items-center">
                 <button onClick={handlePhraseResetClick}>
-                    <MdJoinInner className={clsx({ "h-9 w-9": true, "text-green-500": linkMode, "text-slate-900": !linkMode })} />
+                    <MdJoinInner className={clsx({ "h-9 w-9 m-2": true, "text-green-500": linkMode, "text-slate-900": !linkMode })} />
                 </button>
                 {data.phrases.map((phrase) => (
                     <li
