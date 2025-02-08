@@ -176,7 +176,7 @@ export const useYouTubePlayer = (args: YTPlayerArgs) => {
     const initialSizes: [number, number] = useMemo(() => {
         if (typeof window === "undefined") return [0, 0];
         const width = window.innerWidth;
-        let playerWidth = width / 1.5;
+        let playerWidth = width / 3;
 
         switch (true) {
             case width > 1280:
@@ -190,7 +190,7 @@ export const useYouTubePlayer = (args: YTPlayerArgs) => {
                 break;
         }
         playerWidth = playerWidth;
-        const playerHeight = playerWidth * (9 / 16);
+        const playerHeight = playerWidth * (9 / 32);
         return [playerWidth - 16, playerHeight - 16];
     }, []);
 
@@ -200,8 +200,7 @@ export const useYouTubePlayer = (args: YTPlayerArgs) => {
             void setSize(width, height);
         };
         const width = window.innerWidth;
-        let playerWidth = width / 1.5;
-
+        let playerWidth = width / 3;
         switch (true) {
             case width > 1280:
                 playerWidth = width / 2;
@@ -213,8 +212,7 @@ export const useYouTubePlayer = (args: YTPlayerArgs) => {
                 playerWidth = width - 40;
                 break;
         }
-        playerWidth = playerWidth;
-        const playerHeight = playerWidth * (9 / 16);
+        const playerHeight = playerWidth * (9 / 32);
         voidSetSize(playerWidth - 16, playerHeight - 16);
     }, []);
 
@@ -234,8 +232,7 @@ export const useYouTubePlayer = (args: YTPlayerArgs) => {
                 playerWidth = width - 40;
                 break;
         }
-        playerWidth = playerWidth;
-        const playerHeight = playerWidth * (9 / 16);
+        const playerHeight = playerWidth * (9 / 32);
         return [playerWidth - 16, playerHeight - 16];
     }, []);
 
@@ -246,7 +243,6 @@ export const useYouTubePlayer = (args: YTPlayerArgs) => {
         };
         const width = window.innerWidth;
         let playerWidth = width / 3;
-
         switch (true) {
             case width > 1280:
                 playerWidth = width / 2;
@@ -258,9 +254,9 @@ export const useYouTubePlayer = (args: YTPlayerArgs) => {
                 playerWidth = width - 40;
                 break;
         }
-        playerWidth = playerWidth;
-        const playerHeight = playerWidth * (9 / 16);
+        const playerHeight = playerWidth * (9 / 32);
         if (playerRef.current) {
+            console.log(`setting width to ${playerWidth}`)
             voidSetSize(playerWidth - 16, playerHeight - 16);
         }
     }, []);

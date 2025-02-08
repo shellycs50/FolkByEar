@@ -4,10 +4,10 @@ export default function RestTimeDropDown({ restTime, setRestTime }: { restTime: 
     return (
         <div className='relative self-end w-full flex justify-center md:justify-end'>
             <div className='w-1/2'>
-                <label htmlFor="rest-time" className="block text-sm/6 text-gray-200 text-center absolute bottom-9 lg:hidden ">
+                <label htmlFor="rest-time" className="block text-sm/6 text-gray-200 text-center absolute bottom-9 xl:hidden ">
                     Rest
                 </label>
-                <label htmlFor="rest-time" className="text-sm/6 text-gray-200 text-center absolute bottom-9 hidden lg:block ">
+                <label htmlFor="rest-time" className="text-sm/6 text-gray-200 text-center absolute bottom-9 hidden xl:block ">
                     Rest Time
                 </label>
                 <div className="mt-2 grid grid-cols-1">

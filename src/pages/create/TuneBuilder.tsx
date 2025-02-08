@@ -237,10 +237,10 @@ export default function CreateTune() {
             const res = dataDecompress(data)
 
             if (res === null) return
-
+            console.log('setting stuff')
             setPhrases(res.phrases)
             setVideoId(res.videoId)
-            setVideoId(res.videoId)
+            setBuilderVideoId(res.videoId)
             setSliderValues([res.phrases[0]?.startTime ?? 0, res.phrases[0]?.endTime ?? 5])
             setSelectedPhrase(0)
             void removeGetParams()
@@ -313,7 +313,7 @@ export default function CreateTune() {
                     </div>
                 </div>
             ) : (
-                <div className="bg-slate-700 flex flex-col justify-center items-center pt-0 pb-0 min-h-screen">
+                <div className="bg-slate-700 flex flex-col justify-start items-center pt-0 pb-0 min-h-screen">
                     <BuilderHeader tryToLeave={tryToLeave} />
                     <div className="flex flex-col gap-5 items-center justify-center pt-4 m-0 w-full">
                         <div className="w-full flex flex-col items-center gap-5">
