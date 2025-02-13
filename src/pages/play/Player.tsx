@@ -4,13 +4,11 @@ import React, { useCallback, useEffect } from "react";
 import PlayPauseIcon from "@heroicons/react/16/solid/PlayPauseIcon";
 import { ForwardIcon } from "@heroicons/react/16/solid";
 import { BackwardIcon } from "@heroicons/react/16/solid";
-// import { ArrowPathIcon } from "@heroicons/react/16/solid"
 import { ArrowUturnLeftIcon } from "@heroicons/react/16/solid";
 import { usePlayerStore } from "packages/player/store";
 import { PlayerPhraseVisualizer } from "packages/player/components/PlayerPhraseVisualizer";
 import SpeedDropDown from "packages/builder/components/SpeedDropDown";
 import RestTimeDropDown from "packages/player/components/RestTimeDropDown";
-import { fmtMSS } from "packages/looper/helpers";
 import debounce from "lodash.debounce";
 import Instructions from "packages/player/components/Instructions";
 import { motion } from "framer-motion";
@@ -18,6 +16,7 @@ import { useRouter } from "next/router";
 import { dataDecompress } from "packages/sharing/conversion";
 import Header from "packages/header/Header";
 import PlayerSlider from "packages/player/components/PlayerSlider";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 
 export default function Player() {
     const setIsPlaying = usePlayerStore((state) => state.setIsPlaying);
@@ -26,7 +25,7 @@ export default function Player() {
 
     const setCurrentTime = usePlayerStore((state) => state.setCurrentTime);
 
-    const duration = usePlayerStore((state) => state.duration);
+    // const duration = usePlayerStore((state) => state.duration);
     const setDuration = usePlayerStore((state) => state.setDuration);
 
     const speed = usePlayerStore((state) => state.speed);
@@ -73,19 +72,34 @@ export default function Player() {
         );
     }, [router]);
 
+    const playInvalidToast = (message: string) => toast.error(message, {
+        position: "top-right",
+        autoClose: 10000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+    });
+
     useEffect(() => {
         const q = router.query;
         if (typeof q.data === "string" && q.data.length > 0) {
             const res = dataDecompress(q.data);
-            if (res !== null) {
-                setData(res);
-                setSliderValues([
-                    res.phrases[0]?.startTime ?? 0,
-                    res.phrases[0]?.endTime ?? 5,
-                ]);
-                setCurrentPhraseIdxs([0]);
+            if (res == null) {
+                playInvalidToast("Invalid data in URL");
                 void removeQueryParams();
+                return
             }
+            setData(res);
+            setSliderValues([
+                res.phrases[0]?.startTime ?? 0,
+                res.phrases[0]?.endTime ?? 5,
+            ]);
+            setCurrentPhraseIdxs([0]);
+            void removeQueryParams();
         }
     }, [removeQueryParams, router.query, setCurrentPhraseIdxs, setData, setSliderValues]);
 
@@ -131,7 +145,7 @@ export default function Player() {
         onLoop: undefined,
     });
 
-    const calculateSliderValues = () => {
+    const calculateSliderValues = useCallback(() => {
         // costing client compute to make ts happy
         const { currentPhraseIdxs, data } = getLatestPlayerState();
         if (!Array.isArray(currentPhraseIdxs) || currentPhraseIdxs.length === 0)
@@ -144,7 +158,7 @@ export default function Player() {
         const endTime = data.phrases[endIdx]?.endTime;
         if (startTime === undefined || endTime === undefined) return;
         return [startTime, endTime];
-    };
+    }, [getLatestPlayerState]);
 
     const handlePlayPauseClick = () => {
         if (!hasStarted) {
@@ -216,7 +230,7 @@ export default function Player() {
         const latest = getLatestPlayerState();
         if (latest.linkMode) {
             const staticCurrentTime = latest.currentTime;
-            const current = data.phrases.find((phrase, idx) => {
+            const current = data.phrases.find((phrase) => {
                 if (
                     phrase.startTime <= staticCurrentTime &&
                     phrase.endTime >= staticCurrentTime
@@ -291,7 +305,19 @@ export default function Player() {
     return (
         <div className="flex min-h-screen w-full flex-col items-center justify-start gap-5 pb-20">
             <Header />
-
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Bounce}
+            />
             <div className="relative select-none">
                 <YouTube
                     loading="lazy"

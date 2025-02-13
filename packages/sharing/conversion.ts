@@ -3,8 +3,7 @@ import {
   decompressFromEncodedURIComponent,
 } from "lz-string";
 import z from "zod";
-import { type BuilderStoreState } from "packages/builder/store";
-import { Phrase } from "packages/builder/store";
+import { type Phrase } from "packages/builder/store";
 
 interface JsonData {
   videoId: string;
@@ -60,7 +59,6 @@ export const dataDecompress = (compressed: string) => {
     console.log(JSON.stringify(validated));
     return playerSchema.parse(validated);
   } catch (e) {
-    console.log(e);
     console.error(e);
     return null;
   }

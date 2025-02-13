@@ -161,7 +161,7 @@ export const useYouTubePlayer = (args: YTPlayerArgs) => {
     };
 
 
-    const throttledSetCurrentTime = throttle((time: number) => setCurrentTime(time), 500);
+    const throttledSetCurrentTime = throttle((time: number) => setCurrentTime(time), 50);
 
     const updateDuration = async () => {
         if (!playerRef.current) return;

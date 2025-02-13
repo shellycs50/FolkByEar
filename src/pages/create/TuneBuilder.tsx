@@ -129,7 +129,8 @@ export default function CreateTune() {
 
 
     const [validUrl, setValidUrl] = React.useState<boolean | null>(null)
-    const submitUrl = (url: string) => {
+
+    const submitUrl = useCallback((url: string) => {
         const id = extractVideoId(url)
         if (id) {
             setVideoId(id)
@@ -140,7 +141,7 @@ export default function CreateTune() {
             setValidUrl(false)
             return false
         }
-    }
+    }, [setBuilderVideoId, setVideoId])
 
     const updatePhrases = useCallback((sliderValues: number[] = [0, duration]) => {
         if (!phrases[selectedPhraseIdx]) return
@@ -159,6 +160,18 @@ export default function CreateTune() {
     const playToast = (message: string) => toast.success(message, {
         position: "top-right",
         autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+    });
+
+    const playInvalidToast = (message: string) => toast.error(message, {
+        position: "top-right",
+        autoClose: 10000,
         hideProgressBar: true,
         closeOnClick: false,
         pauseOnHover: true,
@@ -237,7 +250,11 @@ export default function CreateTune() {
         if (typeof data === 'string' && data.length > 0) {
             const res = dataDecompress(data)
 
-            if (res === null) return
+            if (res === null) {
+                playInvalidToast('Invalid data found in url')
+                void removeGetParams()
+                return
+            }
             console.log('setting stuff')
             setPhrases(res.phrases)
             setVideoId(res.videoId)
@@ -262,7 +279,7 @@ export default function CreateTune() {
                 void removeGetParams()
             }
         }
-    }, [router.query])
+    }, [removeGetParams, router.query.url, setUserUrl, submitUrl])
 
     const handleAddPhraseClick = () => {
         const builder = useTuneBuilderStore.getState()
@@ -447,23 +464,24 @@ export default function CreateTune() {
                             <Instructions />
                         </div>
                     </div>
-                    <ToastContainer
-                        position="top-right"
-                        autoClose={5000}
-                        hideProgressBar={false}
-                        newestOnTop={false}
-                        closeOnClick={false}
-                        rtl={false}
-                        pauseOnFocusLoss
-                        draggable
-                        pauseOnHover
-                        theme="light"
-                        transition={Bounce}
-                    />
+
                     <DangerDialog {...dangerDialogArgs} />
                 </div>
             )
             }
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Bounce}
+            />
         </>
     );
 }

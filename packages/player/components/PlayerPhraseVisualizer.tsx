@@ -1,10 +1,7 @@
-import { PlayerState, usePlayerStore } from "../store";
+import { usePlayerStore } from "../store";
 import clsx from "clsx";
-import { YTPlayerNoResize } from "packages/looper/useYoutubePlayer";
 import React, { useCallback } from "react";
-import { useMemo } from "react";
 import { MdJoinInner } from "react-icons/md";
-import throttle from "lodash.throttle";
 interface PlayerPhraseVisualizerProps {
     updateTime: () => void;
     linkMode: boolean;
