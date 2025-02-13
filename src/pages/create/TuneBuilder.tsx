@@ -71,12 +71,13 @@ export default function CreateTune() {
 
 
     const router = useRouter()
-    const removeGetParams = async () => {
+
+    const removeGetParams = useCallback(async () => {
         await router.push({
             pathname: router.pathname,
             query: {},
         }, undefined, { shallow: true });
-    }
+    }, [router])
 
 
     const playerOpts = React.useState({
@@ -245,7 +246,7 @@ export default function CreateTune() {
             setSelectedPhrase(0)
             void removeGetParams()
         }
-    }, [router.query])
+    }, [removeGetParams, router.query.data, setBuilderVideoId, setPhrases, setSelectedPhrase, setSliderValues, setVideoId])
 
     React.useEffect(() => {
         const url = router.query.url
