@@ -57,8 +57,10 @@ export const dataDecompress = (compressed: string) => {
   try {
     const jsonDataString = decompressFromEncodedURIComponent(compressed);
     const validated = playerSchema.parse(JSON.parse(jsonDataString));
+    console.log(JSON.stringify(validated));
     return playerSchema.parse(validated);
   } catch (e) {
+    console.log(e);
     console.error(e);
     return null;
   }

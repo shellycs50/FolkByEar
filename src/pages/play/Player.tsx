@@ -62,7 +62,7 @@ export default function Player() {
 
     const router = useRouter();
 
-    const removeQueryParams = async () => {
+    const removeQueryParams = useCallback(async () => {
         await router.push(
             {
                 pathname: router.pathname,
@@ -71,7 +71,7 @@ export default function Player() {
             undefined,
             { shallow: true },
         );
-    };
+    }, [router]);
 
     useEffect(() => {
         const q = router.query;
@@ -87,7 +87,7 @@ export default function Player() {
                 void removeQueryParams();
             }
         }
-    }, []);
+    }, [removeQueryParams, router.query, setCurrentPhraseIdxs, setData, setSliderValues]);
 
     // const onLoopCore = () => {
     //     const pp = usePlayerStore.getState()
